@@ -279,8 +279,7 @@ spongeBot.exam = {
 };
 spongeBot.examine = spongeBot.exam; // alias
 spongeBot.tele = {
-	access: [],
-	help: '(immortals only) `tele <room>` to teleport to <room>.',
+	help: '(immortals only, temporarily unlocked) `tele <room>` to teleport to <room>.',
 	do: function(message, parms) {
 		iFic.tele.do(message, parms, BOT);
 	}
@@ -308,6 +307,20 @@ spongeBot.who = {
 	help: '(wizards only) Show info about a user',
 	do: function(message, parms) {
 		iFic.who.do(message, parms);
+	}
+};
+spongeBot.profile = {
+	help: 'Use `!profile <description>` to set the description others see when `exam`ining your character.' +
+	  '\n. Changes do not take effect immediately and must be approved by an immortal.',
+	do: function(message, parms) {
+		iFic.profile.do(message, parms);
+	}
+};
+spongeBot.approve = {
+	access: [],
+	help: '(immortals only) `!approve <discordId>` to approve a profile. (Will be by character name later)',
+	do: function(message, parms) {
+		iFic.approve.do(message, parms);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -385,7 +398,12 @@ BOT.on('ready', () => {
 	iFic.buildItems();
 	debugPrint('SpongeMUD version ' + cons.VERSION_STRING + ' READY!');
 	BOT.user.setGame("m.joinmud to login to SpongeMUD!");
-	if (Math.random() < 0.05) {BOT.channels.get(cons.SPAMCHAN_ID).send('Join the MUD today with `m.joinmud`!');}
+	if (Math.random() < 0.02) {BOT.channels.get(cons.SPAMCHAN_ID).send('Join the MUD today with `m.joinmud`!');}
+});
+//-----------------------------------------------------------------------------
+BOT.on('rateLimit', (info) => {
+	console.log('### RATE LIMITED. Data follows');
+	console.log(JSON.stringify(info));
 });
 //-----------------------------------------------------------------------------
 BOT.on('message', message => {
