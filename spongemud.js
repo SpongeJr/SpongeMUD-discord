@@ -219,6 +219,13 @@ spongeBot.killitem = {
 	do: function(message, parms) {
 		iFic.killitem.do(message, parms);
 	}
+},
+spongeBot.edex = {
+	help: '(wizards only, temporarily unlocked) shortcut for `edroom exits',
+	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
+	do: function(message, parms) {
+		iFic.edroom.do(message, "exits " + parms);
+	}
 }
 spongeBot.edroom = {
 	help: '(wizards only, temporary unlocked) edit a room\n' +	
@@ -310,7 +317,7 @@ spongeBot.who = {
 	}
 };
 spongeBot.profile = {
-	help: 'Use `!profile <description>` to set the description others see when `exam`ining your character.' +
+	help: 'Use `profile <description>` to set the description others see when `exam`ining your character.' +
 	  '\n. Changes do not take effect immediately and must be approved by an immortal.',
 	do: function(message, parms) {
 		iFic.profile.do(message, parms);
@@ -318,9 +325,29 @@ spongeBot.profile = {
 };
 spongeBot.approve = {
 	access: [],
-	help: '(immortals only) `!approve <discordId>` to approve a profile. (Will be by character name later)',
+	help: '(immortals only) `approve <discordId>` to approve a profile. (Will be by character name later)',
 	do: function(message, parms) {
 		iFic.approve.do(message, parms);
+	}
+};
+spongeBot.age = {
+	help: 'age <character> (experimental) reveal a charcters age in ticks',
+	do: function(message, parms) {
+		iFic.age.do(message, parms);
+	}
+}
+spongeBot.zones = {
+	help: '(immortals only) Scan the world and list off all the found zones.',
+	longHelp: '(immortals only) Scan the world and list off all the found zones.',
+	do: function(message, parms) {
+		iFic.zones.do(message, parms);
+	}
+};
+spongeBot.zone = {
+	help: 'See info about the zone you are currently in.',
+	longHelp: 'See info about the zone you are currently in.',
+	do: function(message, parms) {
+		iFic.zone.do(message, parms);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -393,16 +420,18 @@ spongeBot.help = {
 };
 //-----------------------------------------------------------------------------
 BOT.on('ready', () => {
-	iFic.buildDungeon(); // build dungeon (Rooms object)
-	iFic.buildPlayers(); // build Players object
-	iFic.buildItems();
+	iFic.buildDungeon(); // build dungeon (rooms object)
+	iFic.buildPlayers(); // build players object
+	iFic.buildItems(); // rebuild items global
 	debugPrint('SpongeMUD version ' + cons.VERSION_STRING + ' READY!');
-	BOT.user.setGame("m.joinmud to login to SpongeMUD!");
+	BOT.user.setActivity('SpongeMUD |  m.joinmud to play!', { type: 'PLAYING' });
 	if (Math.random() < 0.02) {BOT.channels.get(cons.SPAMCHAN_ID).send('Join the MUD today with `m.joinmud`!');}
+	
+	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
 });
 //-----------------------------------------------------------------------------
 BOT.on('rateLimit', (info) => {
-	console.log('### RATE LIMITED. Data follows');
+	console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
 	console.log(JSON.stringify(info));
 });
 //-----------------------------------------------------------------------------
