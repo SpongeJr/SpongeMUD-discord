@@ -257,6 +257,12 @@ spongeBot.say = {
 		iFic.say.do(message, parms, BOT);
 	}
 };
+spongeBot.yell = {
+	help: 'speak to those in the same location',
+	do: function(message, parms) {
+		iFic.yell.do(message, parms, BOT);
+	}
+};
 //-----------------------------------------------------------------------------
 // wiz commands
 //-----------------------------------------------------------------------------
