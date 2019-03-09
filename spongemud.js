@@ -376,6 +376,18 @@ spongeBot.drop = {
 		iFic.drop.do(message, parms, BOT);
 	}
 };
+spongeBot.crush = {
+	help: '`crush <item>` to destroy an item in your inventory.',
+	do: function(message, parms) {
+		iFic.crush.do(message, parms, BOT);
+	}
+};
+spongeBot.use = {
+	help: '`use <item>` to use something.',
+	do: function(message, parms) {
+		iFic.use.do(message, parms, BOT);
+	}	
+};
 spongeBot.list = {
 	help: '`list <matchString>` show all items, exits, mobs, and characters matching the string.',
 	do: function(message, args) {
