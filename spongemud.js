@@ -275,6 +275,12 @@ spongeBot.wizitem = {
 		iFic.wizitem.do(message, parms);
 	}
 };
+spongeBot.makeprop = {
+	help: 'Use to turn a template you are holding into a prop before `publish`ing.',
+	do: function(message, args) {
+		iFic.makeprop.do(message, args);
+	}
+};
 spongeBot.wizprop = {
 	help: '(wizards only, temporarily unlocked) create a prop (scenery) item\n' +
 	  '_Syntax:_ `wizprop <id> <description>`',
@@ -299,7 +305,8 @@ spongeBot.wizprop = {
 spongeBot.edtemp = {
 	help: '(wizards only, temporarily unlocked) edit an item template' +
 	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
-	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
+	longHelp: '(wizards only, temporarily unlocked) edit an item template' +
+	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
 	do: function(message, parms) {
 		iFic.edtemp.do(message, parms);
 	}
@@ -358,7 +365,7 @@ spongeBot.wiztemp = {
 };
 spongeBot.publish = {
 	access: false,
-	help: '(wizards only, temporarily unlocked?) create a tempate',
+	help: '(wizards only) oublish a pending template',
 	do: function(message, parms) {
 		iFic.publish.do(message, parms);
 	}
