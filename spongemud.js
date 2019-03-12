@@ -143,6 +143,12 @@ spongeBot.approve = {
 		iFic.approve.do(message, parms);
 	}
 };
+spongeBot.players = {
+	help: 'Get info about the number of players and currently active players.',
+	do: function(message, parms) {
+		iFic.players.do(message, parms);
+	}
+},
 spongeBot.killitem = {
 	access: [],
 	help: '(immortals only) perma delete an item with no undo.' +
