@@ -281,6 +281,12 @@ spongeBot.wizitem = {
 		iFic.wizitem.do(message, parms);
 	}
 };
+spongeBot.wizmob = {
+	help: '(wizards only) create a new mob from a mob template\n',
+	do: function(message, parms) {
+		iFic.wizmob.do(message, parms);
+	}
+};
 spongeBot.makeprop = {
 	help: 'Use to turn a template you are holding into a prop before `publish`ing.',
 	do: function(message, args) {
