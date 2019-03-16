@@ -284,7 +284,7 @@ spongeBot.wizitem = {
 spongeBot.wizmob = {
 	help: '(wizards only) (non-functional) create a new mob from a mob template\n',
 	do: function(message, parms) {
-		//iFic.wizmob.do(message, parms);
+		iFic.wizmob.do(message, parms);
 	}
 };
 spongeBot.makemob = {
