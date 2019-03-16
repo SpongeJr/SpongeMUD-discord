@@ -282,40 +282,33 @@ spongeBot.wizitem = {
 	}
 };
 spongeBot.wizmob = {
-	help: '(wizards only) create a new mob from a mob template\n',
+	help: '(wizards only) (non-functional) create a new mob from a mob template\n',
 	do: function(message, parms) {
-		iFic.wizmob.do(message, parms);
+		//iFic.wizmob.do(message, parms);
+	}
+};
+spongeBot.makemob = {
+	help: '(wizards only) (non-functional) turn a held template into a mob\n',
+	do: function(message, parms) {
+		//iFic.makemob.do(message, parms);
 	}
 };
 spongeBot.makeprop = {
 	help: 'Use to turn a template you are holding into a prop before `publish`ing.',
-	do: function(message, args) {
-		iFic.makeprop.do(message, args);
-	}
-};
-spongeBot.wizprop = {
-	help: '(wizards only, temporarily unlocked) create a prop (scenery) item\n' +
-	  '_Syntax:_ `wizprop <id> <description>`',
-	longHelp: ' ** wizprop help **\n `wizprop <id> <description>`\n' +
+	longHelp: ' ** PROPS HELP **\n ' +
+	  ' makeprop`: Use to turn a template you are holding into a prop before `publish`ing.\n' +
 	  ' The current version of this command allows wizards to create a "prop".' +
 	  ' Props are scenery items that do not show up in the "Obvious items" list' +
 	  ' when `look`ing at a room. Props cannot be picked up. The prop will appear' +
 	  ' in your inventory after creation. You should then drop it in the room' +
 	  ' where you want it to become part of the scenery. Once dropped, even you' +
-	  ' will not be able to pick it back up, so take care! If you do accidentally' +
-	  ' drop a prop in the wrong place, `killitem <id>` can be used to destroy it.' +
-	  '\n\n _Syntax:_ `wizitem <id> <description>`\n' +
-	  ' `<id>` is required, should be a single word that starts with a letter, ' +
-	  'and should be unique _to this room_.\n' +
-	  ' `<description>` is required, and can be multiple words and include line ' +
-	  'breaks and standard markdown formatting. Emoji is discouraged, and may be ' +
-	  'unsupported in the future.',
-	do: function(message, parms) {
-		iFic.wizprop.do(message, parms);
+	  ' will not be able to pick it back up, so take care!',
+	do: function(message, args) {
+		iFic.makeprop.do(message, args);
 	}
 };
 spongeBot.edtemp = {
-	help: '(wizards only, temporarily unlocked) edit an item template' +
+	help: '(wizards only) edit an item template' +
 	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
 	longHelp: '(wizards only, temporarily unlocked) edit an item template' +
 	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
@@ -324,7 +317,7 @@ spongeBot.edtemp = {
 	}
 },
 spongeBot.edex = {
-	help: '(wizards only, temporarily unlocked) shortcut for `edroom exits',
+	help: '(wizards only) shortcut for `edroom exits',
 	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
 	do: function(message, parms) {
 		iFic.edroom.do(message, "exits " + parms);
@@ -357,27 +350,20 @@ spongeBot.edroom = {
  	  ' `edroom delexit <exitId>`: irreversibly delete an exit. The room it linked to' +
 	  ' will not be altered in any way.\n',
 	access: false,
-	do: function(message, parms) {
-		iFic.edroom.do(message, parms);
-	}
-};
-spongeBot.wizroom = {
-	access: false,
-	help: '(wizards only, temporarily unlocked) create a room',
-	do: function(message, parms) {
-		iFic.wizroom.do(message, parms);
+	do: function(message, args) {
+		iFic.edroom.do(message, args, BOT);
 	}
 };
 spongeBot.wiztemp = {
 	access: false,
-	help: '(wizards only, temporarily unlocked?) create a tempate.\n Use: `wiztemp <"unique id name"> <shortName> <long description>`',
+	help: '(wizards only) create a tempate.\n Use: `wiztemp <"unique id name"> <shortName> <long description>`',
 	do: function(message, parms) {
 		iFic.wiztemp.do(message, parms);
 	}
 };
 spongeBot.publish = {
 	access: false,
-	help: '(wizards only) oublish a pending template',
+	help: '(wizards only) publish a pending template',
 	do: function(message, parms) {
 		iFic.publish.do(message, parms);
 	}
@@ -446,8 +432,7 @@ spongeBot.me = {
 };
 
 spongeBot.title = {
-	help: 'Use `profile <description>` to set the description others see when `exam`ining your character.' +
-	  '\n. Changes do not take effect immediately and must be approved by an immortal.',
+	help: 'Set your characters title, or set no title. Try `title` by itself for more help.',
 	do: function(message, parms) {
 		iFic.title.do(message, parms);
 	}
@@ -460,7 +445,7 @@ spongeBot.profile = {
 	}
 };
 spongeBot.age = {
-	help: 'age <character> (experimental) reveal a charcters age in ticks',
+	help: 'age <character> reveal a charcter\'s age in ticks',
 	do: function(message, parms) {
 		iFic.age.do(message, parms);
 	}
