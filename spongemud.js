@@ -540,6 +540,7 @@ BOT.on('ready', () => {
 	iFic.buildDungeon(); // build dungeon (rooms object)
 	iFic.buildPlayers(BOT); // build players object
 	iFic.buildItems(); // rebuild items global
+	iFic.buildMobs();
 	debugPrint(`SpongeMUD version ${cons.VERSION_STRING} READY!`);
 	BOT.user.setActivity(`SpongeMUD |  ${cons.PREFIX}joinmud to play!`, { type: 'PLAYING' });;
 	if (Math.random() < 0.01) {BOT.channels.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
