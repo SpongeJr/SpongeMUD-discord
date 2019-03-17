@@ -24,7 +24,7 @@ const FS = require('fs');
 
 const helpfile = require('./lib/helpfile.json');
 
-var debugPrint =function(inpString){
+var debugPrint = function(inpString){
 // throw away that old console.log and try our brand new debugPrint!
 // can add all sorts of goodies here, like sending output to a Discord chan or DN
 // for now, just checks if the global debugMode is true. If it isn't,
@@ -144,6 +144,7 @@ spongeBot.approve = {
 	}
 };
 spongeBot.players = {
+	access: [],
 	help: 'Get info about the number of players and currently active players.',
 	do: function(message, parms) {
 		iFic.players.do(message, parms);
@@ -179,7 +180,25 @@ spongeBot.setaccess = {
 	help: '(Sponges only) setaccess <discordId> <integer>', 
 	do: function(message, parms) {
 		iFic.setaccess.do(message, parms, BOT);
-	}	
+	}
+};
+spongeBot.icanhaz = {
+	help: '(Wizards+) `icanhaz <zonename>` to get the raw data of a zone you author',
+	do: function(message, parms) {
+		iFic.icanhaz.do(message, parms, BOT, Discord);
+	}
+};
+spongeBot.nukemyzone = {
+	help: '(Wizards+) `nuke <zonename>` to TOTALLY WIPE OUT YOUR ZONE SERIOUSLY FOR REAL',
+	do: function(message, parms) {
+		iFic.nukemyzone.do(message, parms, BOT, Discord);
+	}
+};
+spongeBot.getfile = {
+	help: '(Developer+ only) (you should know the syntax)',
+	do: function(message, parms) {
+		iFic.getfile.do(message, parms, BOT, Discord);
+	}
 };
 spongeBot.nuke = {
 	access: [],
