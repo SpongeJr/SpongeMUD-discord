@@ -129,6 +129,12 @@ spongeBot.savemud = {
 		iFic.savemud.do(message, parms);
 	}
 };
+spongeBot.represent = {
+	help: '`represent` lets you opt-in or opt-out of generating fame for your server.',
+	do: function(message, args) {
+		iFic.represent.do(message, args, BOT);
+	}
+}
 spongeBot.backup = {
 	access: [],
 	help: '(immortals only) Does immediate backup on players and rooms files.',
