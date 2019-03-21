@@ -181,6 +181,12 @@ spongeBot.peek = {
 		iFic.peek.do(message,args);
 	}
 };
+spongeBot.pcalc = {
+	help: '(testing thing) calculate power level and power points for a character of specified level',
+	do: function(message, args) {
+		iFic.pcalc.do(message, args);
+	}
+}
 spongeBot.build = {
 	access: [],
 	help: '(immortals only) Attempts to initialize SpongeMUD',
@@ -281,6 +287,7 @@ spongeBot.attack = {
 	}
 };
 spongeBot.att = spongeBot.attack; // alias
+spongeBot.kill = spongeBot.attack;  // alias
 
 spongeBot.inv = {
 	help: 'Check your inventory',
