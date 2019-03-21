@@ -358,7 +358,7 @@ spongeBot.edex = {
 	help: '(wizards only) shortcut for `edroom exits',
 	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
 	do: function(message, args) {
-		iFic.edroom.do(message, "exits " + args);
+		iFic.edroom.do(message, "exits " + args, BOT);
 	}
 };
 spongeBot.edroom = {
