@@ -136,9 +136,15 @@ spongeBot.represent = {
 	}
 };
 spongeBot.topfame = {
-	help: '(WIP command) lets you see the top servers in same',
+	help: 'Lets you see the top servers in fame',
 	do: function(message, args) {
 		iFic.topfame.do(message, args, BOT);
+	}
+};
+spongeBot.topxp = {
+	help: 'Lets you see the top players by XP',
+	do: function(message, args) {
+		iFic.topxp.do(message, args, BOT);
 	}
 };
 spongeBot.backup = {
