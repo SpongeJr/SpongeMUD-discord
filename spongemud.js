@@ -255,28 +255,34 @@ spongeBot.who = {
 //-----------------------------------------------------------------------------
 spongeBot.north = {
 	do: (message) => spongeBot.go.do(message, 'north')
-}
+};
 spongeBot.south = {
 	do: (message) => spongeBot.go.do(message, 'south')
-}
+};
 spongeBot.west = {
 	do: (message) => spongeBot.go.do(message, 'west')
-}
+};
 spongeBot.east = {
 	do: (message) => spongeBot.go.do(message, 'east')
-},
+};
 spongeBot.northwest = {
 	do: (message) => spongeBot.go.do(message, 'northwest')
-}
+};
 spongeBot.southwest = {
 	do: (message) => spongeBot.go.do(message, 'southwest')
-}
+};
 spongeBot.northeast = {
 	do: (message) => spongeBot.go.do(message, 'northeast')
-}
+};
 spongeBot.southeast = {
 	do: (message) => spongeBot.go.do(message, 'southeast')
-}
+};
+spongeBot.up = {
+	do: (message) => spongeBot.go.do(message, 'up')
+};
+spongeBot.down = {
+	do: (message) => spongeBot.go.do(message, 'down')
+};
 spongeBot.n = spongeBot.north;
 spongeBot.s = spongeBot.south;
 spongeBot.w = spongeBot.west;
@@ -285,6 +291,8 @@ spongeBot.nw = spongeBot.northwest;
 spongeBot.sw = spongeBot.southwest;
 spongeBot.ne = spongeBot.northeast;
 spongeBot.se = spongeBot.southeast;
+spongeBot.u = spongeBot.up;
+spongeBot.d = spongeBot.down;
 //-----------------------------------------------------------------------------
 spongeBot.attack = {
 	help: 'Attack another character or mob! (WIP)',
