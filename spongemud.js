@@ -85,7 +85,8 @@ spongeBot.look = {
 	}
 };
 spongeBot.joinmud = {
-	help: 'Join SpongeMUD (extremely early pre-alpha)',
+	help: "Joins SpongeMUD (wakes your character up if asleep, " +
+	  " or creates a new character if you don't have one.",
 	do: function(message, args) {
 		iFic.joinmud.do(message, args, BOT);
 	}
