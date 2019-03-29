@@ -16,6 +16,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
+const ut = require('./lib/utils.js');
 const cons = require('./lib/constants.js');
 const Discord = require('discord.js');
 const CONFIG = require('../../' + cons.CFGFILE);
@@ -77,7 +78,7 @@ spongeBot.time = {
 	do: function(message, args) {
 		iFic.time.do(message, args);
 	}
-}
+};
 spongeBot.look = {
 	help: 'Look at the room you are in.',
 	do: function(message, args) {
@@ -368,7 +369,33 @@ spongeBot.edtemp = {
 	do: function(message, args) {
 		iFic.edtemp.do(message, args);
 	}
-},
+};
+spongeBot.survey = {
+	help: 'Survey a room for potential resources. Requires surveypoints.',
+	do: function(message, args) {
+		iFic.survey.do(message, args);
+	}
+};
+spongeBot.gather = {
+	help: 'Gather resources from a room you have `survey`ed. Required gatherpoints.',
+	do: function(message, args) {
+		iFic.gather.do(message, args);
+	}
+};
+spongeBot.claim = {
+	help: '`claim <resource> <# points to spend>`: Lay claim to a resource in the current room.' +
+	  '\nYou can also use this to change the number of points you already have allotted to a resource.' +
+	  '\nExample: `claim plants 20` would allocate 20 gathering points to plants in the current room.',
+	do: function(message, args) {
+		iFic.claim.do(message, args);
+	}
+};
+spongeBot.craft = {
+	help: 'Be all crafty and stuff.',
+	do: function(message, args) {
+		iFic.craft.do(message, args);
+	}
+};
 spongeBot.edex = {
 	help: '(wizards only) shortcut for `edroom exits',
 	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
@@ -601,10 +628,20 @@ BOT.on('ready', () => {
 	
 	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
 });
-//-----------------------------------------------------------------------------
+
+
 BOT.on('rateLimit', (info) => {
-	console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
-	console.log(JSON.stringify(info));
+    console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
+    console.log(JSON.stringify(info));
+	/*
+    info = JSON.stringify(info);
+	
+	// get channel id from info.path and get a Channel object:
+    const channel = BOT.channels.get(info.split("/channels")[1].split("/")[1]);
+	
+    //console.log(channel);
+    ut.messageQueue.setSlowMode(channel, info.timeDifference);
+	*/
 });
 //-----------------------------------------------------------------------------
 BOT.on('message', message => {
