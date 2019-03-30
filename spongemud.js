@@ -16,7 +16,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
-const ut = require('./lib/utils.js');
+//const ut = require('./lib/utils.js');
 const cons = require('./lib/constants.js');
 const Discord = require('discord.js');
 const CONFIG = require('../../' + cons.CFGFILE);
@@ -50,25 +50,6 @@ var spongeBot = {};
 
 var utils = require('./lib/utils.js');
 var iFic = require('./lib/ific.js');
-
-var botStorage = {};
-//-----------------------------------------------------------------------------
-var msToTime = function(inp) {
-	var sec = Math.floor(inp / 1000);
-	var min = Math.floor(inp / (1000 * 60));
-	var hr = Math.floor(inp / (1000 * 3600));
-	var day = Math.floor(inp / (1000 * 3600 * 24));
-
-	if (sec < 60) {
-		return sec + ' sec ';
-	} else if (min < 60) {
-		return min + ' min ' + sec % 60 + ' sec ';
-	} else if (hr < 24) {
-		return hr + ' hr ' + min % 60 + ' min ' + sec % 60 + ' sec ';
-    } else {
-		return day + ' days ' + hr % 24 + ' hr ' + min % 60 + ' min ' + sec % 60 + ' sec ';
-    }
-};
 //-----------------------------------------------------------------------------
 var hasAccess = function(who, accessArr) {
 	return (who === cons.SPONGE_ID || who === cons.ARCH_ID);
@@ -194,7 +175,7 @@ spongeBot.pcalc = {
 	do: function(message, args) {
 		iFic.pcalc.do(message, args);
 	}
-}
+};
 spongeBot.build = {
 	access: [],
 	help: '(immortals only) Attempts to initialize SpongeMUD',
@@ -629,7 +610,7 @@ BOT.on('ready', () => {
 	iFic.buildItems(); // rebuild items global
 	iFic.buildMobs();
 	debugPrint(`SpongeMUD version ${cons.VERSION_STRING} READY!`);
-	BOT.user.setActivity(`${cons.PREFIX}joinmud   (if you dare!)`, { type: 'PLAYING' });;
+	BOT.user.setActivity(`${cons.PREFIX}joinmud   (if you dare!)`, { type: 'PLAYING' });
 	if (Math.random() < 0.01) {BOT.channels.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
 	
 	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
@@ -653,15 +634,15 @@ BOT.on('rateLimit', (info) => {
 BOT.on('message', message => {
 	if (message.content.startsWith(cons.PREFIX) || message.channel.type === 'dm') {
 		
-		var botCmd;
+		let botCmd;
 		if (message.content.startsWith(cons.PREFIX)) {
-			var botCmd = message.content.slice(2); // retains the whole line, minus m.
+			botCmd = message.content.slice(2); // retains the whole line, minus m.
 		} else {
 			botCmd = message.content; // DM and didn't start with m. so whole line is command
 		}
-		var theCmd = botCmd.split(' ')[0];
+		let theCmd = botCmd.split(' ')[0];
 
-		var args = botCmd.replace(theCmd, ''); // remove the command itself, rest is args
+		let args = botCmd.replace(theCmd, ''); // remove the command itself, rest is args
 		theCmd = theCmd.toLowerCase();
 		if (!spongeBot.hasOwnProperty(theCmd)) {
 			// not a valid command
