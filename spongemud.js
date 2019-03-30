@@ -323,6 +323,12 @@ spongeBot.yell = {
 		iFic.yell.do(message, args, BOT);
 	}
 };
+spongeBot.worldsay = {
+	help: '(immortals only) broadcast a message to the world',
+	do: function(message, args) {
+		iFic.worldsay.do(message, args, BOT);
+	}
+};
 //-----------------------------------------------------------------------------
 // wiz commands
 //-----------------------------------------------------------------------------
