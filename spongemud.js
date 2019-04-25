@@ -532,6 +532,30 @@ spongeBot.zone = {
 	}
 };
 //-----------------------------------------------------------------------------
+spongeBot.game = {
+	cmdGroup: 'Minigames',
+	help: 'For interaction with minigames.',
+	longHelp: 'For interaction with minigames. Use: `game <gameName> <gameCommand>` \n' +
+		' Current minigames:\n `chef`: "Troll cuisine"',
+	do: function(message, args, BOT) {
+		iFic.game.do(message, args);
+	}
+};
+spongeBot.pick = {
+	cmdGroup: 'Menus',
+	help: 'Use in menu interfaces to pick a numbered choice.',
+	do: function(message, args) {
+		let result = iFic.pick.do(message, args);
+		
+		if (result) {
+			// drop hat
+			// 
+		}
+		
+	}
+};
+spongeBot.choose = spongeBot.pick; // alias
+//-----------------------------------------------------------------------------
 spongeBot.v = {
 	cmdGroup: 'Miscellaneous',
 	do: function(message) {
@@ -633,7 +657,7 @@ BOT.on('rateLimit', (info) => {
 //-----------------------------------------------------------------------------
 BOT.on('message', message => {
 	if (message.content.startsWith(cons.PREFIX) || message.channel.type === 'dm') {
-		
+
 		let botCmd;
 		if (message.content.startsWith(cons.PREFIX)) {
 			botCmd = message.content.slice(2); // retains the whole line, minus m.
@@ -645,11 +669,29 @@ BOT.on('message', message => {
 		let args = botCmd.replace(theCmd, ''); // remove the command itself, rest is args
 		theCmd = theCmd.toLowerCase();
 		if (!spongeBot.hasOwnProperty(theCmd)) {
-			// not a valid command
-			return;
+			// not a valid command, might be a menu-mode number...
+			if (isNaN(parseInt(theCmd))) {
+				return; // nope, not a number, either, so fail out of here
+			} else {
+				// the command was a number, check for "menu aliases"
+				// the whole thing is an alias for `pick <#> anyway,
+				// which will return a legit command alias + args if there is one,
+				// or undefined or false otherwise
+				let newFullCmd = iFic.pick.do(message, theCmd);
+				if (newFullCmd) {
+					let newCmd = newFullCmd.split(' ')[0];
+					args = newFullCmd.replace(newCmd, '');
+					if (!spongeBot.hasOwnProperty(newCmd)) {
+						debugPrint(` WARNING! Menu alias for ${theCmd} was invalid command ${newCmd}!`);
+					} else {
+						theCmd = newCmd; // ...and continue on through to regular parser
+					}
+				}
+			}
 		}
+
 		args = args.slice(1); // remove leading space
-		
+
 		if (typeof spongeBot[theCmd] !== 'undefined') {
 			//debugPrint('  ' + utils.makeTag(message.author.id) + ': ' + theCmd + ' (' + args + ') : ' + message.channel);
 			debugPrint(`  @${message.author.id}: ${theCmd} (${args})`);
@@ -667,7 +709,7 @@ BOT.on('message', message => {
 							  ', ignoring limited-access command !' + theCmd);
 						} else {
 							// all good. reset users idle timeout and then run command
-							iFic.idleReset(message);							
+							iFic.idleReset(message);
 							spongeBot[theCmd].do(message, args);
 						}
 					}
