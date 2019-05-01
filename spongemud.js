@@ -541,21 +541,16 @@ spongeBot.game = {
 		iFic.game.do(message, args);
 	}
 };
-spongeBot.pick = {
-	cmdGroup: 'Menus',
-	help: 'Use in menu interfaces to pick a numbered choice.',
-	do: function(message, args) {
-		let result = iFic.pick.do(message, args);
-		
-		if (result) {
-			// drop hat
-			// 
-		}
-		
+//-----------------------------------------------------------------------------
+spongeBot.setmacro = {
+	cmdGroup: 'Miscellaneous',
+	help: 'Use to set a personal macro.',
+	longHelp: 'Use `setmacro <#> <command>` to set a personal macro that you then ' +
+		`can activate using \`${cons.PLAYER_MACRO_LETTER} <#>\` at any time`,
+	do: function(message, args, BOT) {
+		iFic.setmacro.do(message, args);
 	}
 };
-spongeBot.choose = spongeBot.pick; // alias
-//-----------------------------------------------------------------------------
 spongeBot.v = {
 	cmdGroup: 'Miscellaneous',
 	do: function(message) {
@@ -669,20 +664,22 @@ BOT.on('message', message => {
 		let args = botCmd.replace(theCmd, ''); // remove the command itself, rest is args
 		theCmd = theCmd.toLowerCase();
 		if (!spongeBot.hasOwnProperty(theCmd)) {
-			// not a valid command, might be a menu-mode number...
-			if (isNaN(parseInt(theCmd))) {
+			// not a valid command, might be a menu-mode number or player macro...
+			if (isNaN(parseInt(theCmd)) && theCmd !== cons.PLAYER_MACRO_LETTER) {
 				return; // nope, not a number, either, so fail out of here
 			} else {
-				// the command was a number, check for "menu aliases"
-				// the whole thing is an alias for `pick <#> anyway,
-				// which will return a legit command alias + args if there is one,
-				// or undefined or false otherwise
-				let newFullCmd = iFic.pick.do(message, theCmd);
+				
+				isMenu = (theCmd !== cons.PLAYER_MACRO_LETTER);			
+				if (!isMenu) {
+					// if it's a player macro, replace theCmd with everything after the "macro letter"]
+					theCmd = args;
+				}			
+				let newFullCmd = iFic.macro.do(message, theCmd, isMenu);
 				if (newFullCmd) {
 					let newCmd = newFullCmd.split(' ')[0];
 					args = newFullCmd.replace(newCmd, '');
 					if (!spongeBot.hasOwnProperty(newCmd)) {
-						debugPrint(` WARNING! Menu alias for ${theCmd} was invalid command ${newCmd}!`);
+						debugPrint(` WARNING! Menu or macro alias for ${theCmd} was invalid command ${newCmd}!`);
 					} else {
 						theCmd = newCmd; // ...and continue on through to regular parser
 					}
