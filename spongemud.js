@@ -16,7 +16,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
-//const ut = require('./lib/utils.js');
 const cons = require('./lib/constants.js');
 const Discord = require('discord.js');
 const CONFIG = require('../../' + cons.CFGFILE);
@@ -25,9 +24,7 @@ const FS = require('fs');
 
 const helpfile = require('./lib/helpfile.json');
 
-var debugPrint = function(inpString){
-// throw away that old console.log and try our brand new debugPrint!
-// can add all sorts of goodies here, like sending output to a Discord chan or DN
+const debugPrint = function(inpString){
 // for now, just checks if the global debugMode is true. If it isn't,
 // doesn't output, just returns
 	if (utils.debugMode) {
@@ -43,15 +40,14 @@ var debugPrint = function(inpString){
 	}
 };
 //-----------------------------------------------------------------------------
-var spongeBot = {};
+const spongeBot = {};
 //-----------------------------------------------------------------------------
 //  MODULES
 //-----------------------------------------------------------------------------
-
-var utils = require('./lib/utils.js');
-var iFic = require('./lib/ific.js');
+const utils = require('./lib/utils.js');
+const iFic = require('./lib/ific.js');
 //-----------------------------------------------------------------------------
-var hasAccess = function(who, accessArr) {
+const hasAccess = function(who, accessArr) {
 	return (who === cons.SPONGE_ID || who === cons.ARCH_ID);
 };
 spongeBot.time = {
@@ -101,7 +97,6 @@ spongeBot.terse = {
 		iFic.terse.do(message, args, BOT);
 	}
 };
-
 //-----------------------------------------------------------------------------
 // Immortal commands
 //-----------------------------------------------------------------------------
@@ -299,7 +294,7 @@ spongeBot.say = {
 	}
 };
 spongeBot.yell = {
-	help: 'speak to those in the same location',
+	help: 'yell to those in the same zone as you',
 	do: function(message, args) {
 		iFic.yell.do(message, args, BOT);
 	}
@@ -511,7 +506,6 @@ spongeBot.me = {
 		iFic.me.do(message, args, BOT);
 	}
 };
-
 spongeBot.title = {
 	help: 'Set your characters title, or set no title. Try `title` by itself for more help.',
 	do: function(message, args) {
@@ -583,15 +577,15 @@ spongeBot.version = {
 spongeBot.server = {
 	cmdGroup: 'Miscellaneous',
 	do: function(message) {
-		var server = message.guild;
+		let server = message.guild;
 		
 		if (!server) {
 			utils.auSend(message, ' Doesn\'t look like you sent me that message on _any_ server!');
 			return;
 		}
 		
-		var str = ' You are on ' + server.name + ', which has the id: ' + 
-		  server.id + '. It was created on: ' + server.createdAt + '.';
+		let str = ` You are on ${server.name}, which has the id: ${server.id}` +
+		  `. It was created on: ${server.createdAt}.`;
 		
 		utils.chSend(message, str);
 	},
@@ -599,7 +593,7 @@ spongeBot.server = {
 };
 spongeBot.help = {
 	do: function(message, args) {
-		var outStr;
+		let outStr;
 		if (args) {
 			if (typeof spongeBot[args] !== 'undefined') {	
 				if (spongeBot[args].longHelp) {
@@ -619,10 +613,10 @@ spongeBot.help = {
 			outStr = ' ** SpongeMUD Help ** _(WIP)_\n\n' +
 			  ' List of commands (may not be complete). Use `help <command>` ' +
 			  ' for more information about a command. More help to come on ' +
-			  ' other topics. \n\nMore help also available _soon_ at ' +
+			  ' other topics. \n\nMore help also available at ' +
 			  ' http://www.spongemud.com/help/\n\n';
 			
-			for (var cmd in spongeBot) {
+			for (let cmd in spongeBot) {
 				if (spongeBot[cmd].access) {
 					// special access imm command hard block
 					if (message.author.id === cons.SPONGE_ID) {
@@ -648,7 +642,6 @@ BOT.on('ready', () => {
 	
 	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
 });
-
 
 BOT.on('rateLimit', (info) => {
     console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
@@ -704,7 +697,6 @@ BOT.on('message', message => {
 		args = args.slice(1); // remove leading space
 
 		if (typeof spongeBot[theCmd] !== 'undefined') {
-			//debugPrint('  ' + utils.makeTag(message.author.id) + ': ' + theCmd + ' (' + args + ') : ' + message.channel);
 			debugPrint(`  @${message.author.id}: ${theCmd} (${args})`);
 			
 			if (!spongeBot[theCmd].disabled) {
