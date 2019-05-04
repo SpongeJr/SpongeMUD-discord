@@ -473,10 +473,24 @@ spongeBot.exam = {
 	}
 };
 spongeBot.examine = spongeBot.exam; // alias
-spongeBot.tele = {
-	help: '(Wizards+ only) `tele <room>` to teleport to <room>.',
+spongeBot.wiztele = {
+	help: '(Wizards+ only) `wiztele <room>` to teleport to <room>.',
 	do: function(message, args) {
-		iFic.tele.do(message, args, BOT);
+		iFic.wiztele.do(message, args, BOT);
+	}
+};
+spongeBot.recall = {
+	help: '`recall` Instantly teleports you to a recall point you have set.\n' +
+	'This command is usable once per day. To set your recall point, use `setrecall`.',
+	do: function(message, args) {
+		iFic.recall.do(message, args, BOT);
+	}
+};
+spongeBot.setrecall = {
+	help: '`setrecall` sets your recall point for use with `recall`\n' +
+	'Note: Only some rooms may be set as recall points.',
+	do: function(message, args) {
+		iFic.setrecall.do(message, args, BOT);
 	}
 };
 spongeBot.sit = {
