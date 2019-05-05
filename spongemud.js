@@ -555,6 +555,13 @@ spongeBot.game = {
 	}
 };
 //-----------------------------------------------------------------------------
+spongeBot.menu = {
+	cmdGroup: 'Miscellaneous',
+	help: 'If you are in a room with a menu interface available, use `menu` to view the menu.',
+	do: function(message, args) {
+		iFic.menu.do(message, args)
+	}
+}
 spongeBot.setmacro = {
 	cmdGroup: 'Miscellaneous',
 	help: 'Use to set a personal macro.',
