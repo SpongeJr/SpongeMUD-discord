@@ -133,8 +133,7 @@ spongeBot.backup = {
 	}
 };
 spongeBot.approve = {
-	access: [],
-	help: "(immortals only) `approve <discordId>` to approve a profile. (Will be by character name later)",
+	help: "(wizards+ only) `approve <discordId>` to approve a profile. (Will be by character name later)",
 	do: function(message, args) {
 		iFic.approve.do(message, args);
 	}
