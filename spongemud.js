@@ -448,6 +448,12 @@ spongeBot.publish = {
 	}
 };
 //-----------------------------------------------------------------------------
+spongeBot.privacy = {
+	help: 'Display or edit your privacy-related options.',
+	do: function(message, args) {
+		iFic.privacy.do(message, args, BOT);
+	}
+};
 spongeBot.autolog = {
 	help: 'Toggles automatically logging your character out after a time.',
 	do: function(message, args) {
