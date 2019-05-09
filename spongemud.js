@@ -538,7 +538,7 @@ spongeBot.title = {
 spongeBot.profile = {
 	help: "Use `profile <character>` to view another charcter's profile",
 	do: function(message, args) {
-		iFic.profile.do(message, args);
+		iFic.profile.do(message, args, BOT);
 	}
 };
 spongeBot.setprofile = {
