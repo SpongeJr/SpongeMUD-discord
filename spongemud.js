@@ -133,9 +133,21 @@ spongeBot.backup = {
 	}
 };
 spongeBot.approve = {
-	help: "(wizards+ only) `approve <discordId>` to approve a profile. (Will be by character name later)",
+	help: "(wizards+ only) `approve <character>` to approve a profile.",
 	do: function(message, args) {
 		iFic.approve.do(message, args);
+	}
+};
+spongeBot.mute = {
+	help: "(moderator command) `mute <character>` to mute someone",
+	do: function(message, args) {
+		iFic.mute.do(message, args);
+	}
+};
+spongeBot.unmute = {
+	help: "(moderator command) `unmute <character>` to unmute someone",
+	do: function(message, args) {
+		iFic.unmute.do(message, args);
 	}
 };
 spongeBot.players = {
@@ -304,6 +316,12 @@ spongeBot.worldsay = {
 		iFic.worldsay.do(message, args, BOT);
 	}
 };
+spongeBot.worldcast = {
+	help: '(immortals only) broadcast a message to the world',
+	do: function(message, args) {
+		iFic.worldcast.do(message, args, BOT);
+	}
+};
 //-----------------------------------------------------------------------------
 // wiz commands
 //-----------------------------------------------------------------------------
@@ -430,6 +448,12 @@ spongeBot.publish = {
 	}
 };
 //-----------------------------------------------------------------------------
+spongeBot.privacy = {
+	help: 'Display or edit your privacy-related options.',
+	do: function(message, args) {
+		iFic.privacy.do(message, args, BOT);
+	}
+};
 spongeBot.autolog = {
 	help: 'Toggles automatically logging your character out after a time.',
 	do: function(message, args) {
@@ -514,7 +538,7 @@ spongeBot.title = {
 spongeBot.profile = {
 	help: "Use `profile <character>` to view another charcter's profile",
 	do: function(message, args) {
-		iFic.profile.do(message, args);
+		iFic.profile.do(message, args, BOT);
 	}
 };
 spongeBot.setprofile = {
