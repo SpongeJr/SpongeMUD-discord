@@ -637,13 +637,13 @@ spongeBot.help = {
 				} else if (spongeBot[args].help) {
 					utils.chSend(message, spongeBot[args].help);
 				} else {
-					utils.chSend(message, 'I have no help about that, ' + message.author);
+					utils.chSend(message, 'I have no help about that.');
 				}
 			} else {
 				
 				// do check for other help topics...
 				
-				utils.chSend(message, 'Not a command I know, ' + message.author);
+				utils.chSend(message, 'That is not a command I know.');
 			}
 		} else {
 			outStr = ' ** SpongeMUD Help ** _(WIP)_\n\n' +
@@ -739,8 +739,7 @@ BOT.on('message', message => {
 				if (spongeBot[theCmd].access) {
 					// requires special access
 					if (!hasAccess(message.author.id, spongeBot[theCmd].access)) {
-						utils.chSend(message, 'Your shtyle is too weak ' +
-						  'for that command, ' + message.author);
+						utils.chSend(message, 'You are unable to do that.');
 					} else {
 						// missing spongebot.command.do
 						if (!spongeBot[theCmd].hasOwnProperty('do')) {
