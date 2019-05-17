@@ -84,6 +84,12 @@ spongeBot.get = {
 		iFic.get.do(message, args, BOT);
 	}
 };
+spongeBot.wizget = {
+	help: "Wizards can use `wizget <item>` to pick up scenery items.",
+	do: function(message, args) {
+		iFic.wizget.do(message, args, BOT);
+	}
+};
 spongeBot.go = {
 	help: "`go <exit>` to move to a different location.",
 	do: function(message, args) {
