@@ -90,6 +90,19 @@ spongeBot.go = {
 		iFic.go.do(message, args, BOT);
 	}
 };
+spongeBot.exits = {
+	help: "Use `exits` to view current exits.",
+	do: function(message, args) {
+		iFic.exits.do(message, args, BOT);
+	}	
+};
+spongeBot.exit = {
+	help: "Use `exit <#>` to take a numbered exit.",
+	do: function(message, args) {
+		iFic.exit.do(message, args, BOT);
+	}	
+};
+spongeBot.ex = spongeBot.exit;
 spongeBot.terse = {
 	help: "Switch between terse and verbose room descriptions " +
 	  " when travelling. `look` will always show the verbose description.",
