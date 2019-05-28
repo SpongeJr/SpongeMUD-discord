@@ -117,7 +117,7 @@ spongeBot.terse = {
 	}
 };
 //-----------------------------------------------------------------------------
-// Immortal commands
+// Limited access commands
 //-----------------------------------------------------------------------------
 spongeBot.savemud = {
 	access: [],
@@ -258,6 +258,152 @@ spongeBot.who = {
 		iFic.who.do(message, args);
 	}
 };
+spongeBot.worldsay = {
+	help: '(immortals only) broadcast a message to the world',
+	do: function(message, args) {
+		iFic.worldsay.do(message, args, BOT);
+	}
+};
+spongeBot.worldcast = {
+	help: '(immortals only) broadcast a message to the world',
+	do: function(message, args) {
+		iFic.worldcast.do(message, args, BOT);
+	}
+};
+//-----------------------------------------------------------------------------
+// Wizard commands
+//-----------------------------------------------------------------------------
+spongeBot.wizitem = {
+	help: '(wizards only) create a new item\n' +
+	  '_Syntax:_ `wizitem <id> <shortname> <description>`',
+	longHelp: ' ** wizitem help **\n `wizitem <id> <description>`\n' +
+	  '_Syntax:_ `wizitem <id> <shortname> <description>`',
+	do: function(message, args) {
+		iFic.wizitem.do(message, args);
+	}
+};
+spongeBot.wizmob = {
+	help: '(wizards only) (non-functional) create a new mob from a mob template\n',
+	do: function(message, args) {
+		iFic.wizmob.do(message, args);
+	}
+};
+spongeBot.makemob = {
+	help: '(wizards only) (non-functional) turn a held template into a mob\n',
+	do: function(message, args) {
+		//iFic.makemob.do(message, args);
+	}
+};
+spongeBot.makeprop = {
+	help: 'Use to turn a template you are holding into a prop before `publish`ing.',
+	longHelp: ' ** PROPS HELP **\n ' +
+	  ' makeprop`: Use to turn a template you are holding into a prop before `publish`ing.\n' +
+	  ' The current version of this command allows wizards to create a "prop".' +
+	  ' Props are scenery items that do not show up in the "Obvious items" list' +
+	  ' when `look`ing at a room. Props cannot be picked up. The prop will appear' +
+	  ' in your inventory after creation. You should then drop it in the room' +
+	  ' where you want it to become part of the scenery. Once dropped, even you' +
+	  ' will not be able to pick it back up, so take care!',
+	do: function(message, args) {
+		iFic.makeprop.do(message, args);
+	}
+};
+spongeBot.edtemp = {
+	help: '(wizards only) edit an item template' +
+	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
+	longHelp: '(wizards only, temporarily unlocked) edit an item template' +
+	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
+	do: function(message, args) {
+		iFic.edtemp.do(message, args);
+	}
+};
+spongeBot.edex = {
+	help: '(wizards only) shortcut for `edroom exits',
+	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
+	do: function(message, args) {
+		iFic.edroom.do(message, "exits " + args, BOT);
+	}
+};
+spongeBot.edroom = {
+	help: '(wizards only, temporary unlocked) edit a room\n' +	
+	  '_Syntax:_ `edroom <title | description | exits | delexit`',
+	longHelp: ' ** edroom help **\n `edroom <title | description | exits | delexit>`\n' +
+	  ' Use this command to edit the current room\'s title, description, or exits.' +
+	  ' The room\'s id cannot be changed.\n\n _Syntax:_ \n' +
+	  ' `edroom title <new title>` to change the title, which can be several words\n' +
+	  ' `edroom description <new description>` to change the room\'s description. This ' +
+	  ' can include line breaks and markdown. Emoji are discouraged, and may not ' +
+	  ' be supported eventually. A general guideline is to be descriptive but to keep ' +
+	  ' descriptions under about 1K chars or so. You can also add detail via props.\n' +
+	  ' `edroom exits <exitName> <description | goesto | hidden | other property>`' +
+	  ' allows you to edit the room\'s exits.\n' +
+	  '   `edroom exits <exitName> <description>`: change the description' +
+	  ' shown when a player `exam`ines the exit.\n   `edroom exits <exitName> goesto <roomId>`:' +
+	  ' either edit or create an exit, and link it to <roomId>. You can do this even if ' +
+	  ' <roomId> does not yet exist, and a fresh room will be created for you.\n' +
+	  '   `edroom exits <exitName> <property> <value>` sets a property like `.hidden`. Please ' +
+	  ' have a good reason for using any other properties. To set a boolean, use `TRUE` or' +
+	  ' `FALSE` in all caps, such as: `edroom exits trapdoor hidden TRUE`.\n' +
+	  '   `edroom exits <exitName> <property>` (with no value) is also valid. This will' +
+	  ' delete a property from an exit, should you want to do that. If the property did not' +
+	  ' previously exist, this form of the command will create the property and set its ' +
+	  ' value to the empty string. Doing it a second time would delete that property.\n' +
+ 	  ' `edroom delexit <exitId>`: irreversibly delete an exit. The room it linked to' +
+	  ' will not be altered in any way.\n',
+	access: false,
+	do: function(message, args) {
+		iFic.edroom.do(message, args, BOT);
+	}
+};
+spongeBot.wiztemp = {
+	access: false,
+	help: '(wizards only) create a tempate.\n Use: `wiztemp <"unique id name"> <shortName> <long description>`',
+	do: function(message, args) {
+		iFic.wiztemp.do(message, args);
+	}
+};
+spongeBot.publish = {
+	access: false,
+	help: '(wizards only) publish a pending template',
+	do: function(message, args) {
+		iFic.publish.do(message, args);
+	}
+};
+spongeBot.wiztele = {
+	help: '(Wizards+ only) `wiztele <room>` to teleport to <room>.',
+	do: function(message, args) {
+		iFic.wiztele.do(message, args, BOT);
+	}
+};
+//-----------------------------------------------------------------------------
+// Gathering and Crafting commands
+//-----------------------------------------------------------------------------
+spongeBot.survey = {
+	help: 'Survey a room for potential resources. Requires surveypoints.',
+	do: function(message, args) {
+		iFic.survey.do(message, args);
+	}
+};
+spongeBot.gather = {
+	help: 'Gather resources from a room you have `survey`ed. Required gatherpoints.',
+	do: function(message, args) {
+		iFic.gather.do(message, args);
+	}
+};
+spongeBot.claim = {
+	help: '`claim <resource> <# points to spend>`: Lay claim to a resource in the current room.' +
+	  '\nYou can also use this to change the number of points you already have allotted to a resource.' +
+	  '\nExample: `claim plants 20` would allocate 20 gathering points to plants in the current room.',
+	do: function(message, args) {
+		iFic.claim.do(message, args);
+	}
+};
+spongeBot.craft = {
+	help: 'Be all crafty and stuff.',
+	do: function(message, args) {
+		iFic.craft.do(message, args);
+	}
+};
 //-----------------------------------------------------------------------------
 // Direction aliases
 //-----------------------------------------------------------------------------
@@ -329,143 +475,6 @@ spongeBot.yell = {
 		iFic.yell.do(message, args, BOT);
 	}
 };
-spongeBot.worldsay = {
-	help: '(immortals only) broadcast a message to the world',
-	do: function(message, args) {
-		iFic.worldsay.do(message, args, BOT);
-	}
-};
-spongeBot.worldcast = {
-	help: '(immortals only) broadcast a message to the world',
-	do: function(message, args) {
-		iFic.worldcast.do(message, args, BOT);
-	}
-};
-//-----------------------------------------------------------------------------
-// wiz commands
-//-----------------------------------------------------------------------------
-spongeBot.wizitem = {
-	help: '(wizards only) create a new item\n' +
-	  '_Syntax:_ `wizitem <id> <shortname> <description>`',
-	longHelp: ' ** wizitem help **\n `wizitem <id> <description>`\n' +
-	  '_Syntax:_ `wizitem <id> <shortname> <description>`',
-	do: function(message, args) {
-		iFic.wizitem.do(message, args);
-	}
-};
-spongeBot.wizmob = {
-	help: '(wizards only) (non-functional) create a new mob from a mob template\n',
-	do: function(message, args) {
-		iFic.wizmob.do(message, args);
-	}
-};
-spongeBot.makemob = {
-	help: '(wizards only) (non-functional) turn a held template into a mob\n',
-	do: function(message, args) {
-		//iFic.makemob.do(message, args);
-	}
-};
-spongeBot.makeprop = {
-	help: 'Use to turn a template you are holding into a prop before `publish`ing.',
-	longHelp: ' ** PROPS HELP **\n ' +
-	  ' makeprop`: Use to turn a template you are holding into a prop before `publish`ing.\n' +
-	  ' The current version of this command allows wizards to create a "prop".' +
-	  ' Props are scenery items that do not show up in the "Obvious items" list' +
-	  ' when `look`ing at a room. Props cannot be picked up. The prop will appear' +
-	  ' in your inventory after creation. You should then drop it in the room' +
-	  ' where you want it to become part of the scenery. Once dropped, even you' +
-	  ' will not be able to pick it back up, so take care!',
-	do: function(message, args) {
-		iFic.makeprop.do(message, args);
-	}
-};
-spongeBot.edtemp = {
-	help: '(wizards only) edit an item template' +
-	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
-	longHelp: '(wizards only, temporarily unlocked) edit an item template' +
-	  ' Use: `edtem "template id" property value` or `edtem "template id" property subproperty value',
-	do: function(message, args) {
-		iFic.edtemp.do(message, args);
-	}
-};
-spongeBot.survey = {
-	help: 'Survey a room for potential resources. Requires surveypoints.',
-	do: function(message, args) {
-		iFic.survey.do(message, args);
-	}
-};
-spongeBot.gather = {
-	help: 'Gather resources from a room you have `survey`ed. Required gatherpoints.',
-	do: function(message, args) {
-		iFic.gather.do(message, args);
-	}
-};
-spongeBot.claim = {
-	help: '`claim <resource> <# points to spend>`: Lay claim to a resource in the current room.' +
-	  '\nYou can also use this to change the number of points you already have allotted to a resource.' +
-	  '\nExample: `claim plants 20` would allocate 20 gathering points to plants in the current room.',
-	do: function(message, args) {
-		iFic.claim.do(message, args);
-	}
-};
-spongeBot.craft = {
-	help: 'Be all crafty and stuff.',
-	do: function(message, args) {
-		iFic.craft.do(message, args);
-	}
-};
-spongeBot.edex = {
-	help: '(wizards only) shortcut for `edroom exits',
-	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
-	do: function(message, args) {
-		iFic.edroom.do(message, "exits " + args, BOT);
-	}
-};
-spongeBot.edroom = {
-	help: '(wizards only, temporary unlocked) edit a room\n' +	
-	  '_Syntax:_ `edroom <title | description | exits | delexit`',
-	longHelp: ' ** edroom help **\n `edroom <title | description | exits | delexit>`\n' +
-	  ' Use this command to edit the current room\'s title, description, or exits.' +
-	  ' The room\'s id cannot be changed.\n\n _Syntax:_ \n' +
-	  ' `edroom title <new title>` to change the title, which can be several words\n' +
-	  ' `edroom description <new description>` to change the room\'s description. This ' +
-	  ' can include line breaks and markdown. Emoji are discouraged, and may not ' +
-	  ' be supported eventually. A general guideline is to be descriptive but to keep ' +
-	  ' descriptions under about 1K chars or so. You can also add detail via props.\n' +
-	  ' `edroom exits <exitName> <description | goesto | hidden | other property>`' +
-	  ' allows you to edit the room\'s exits.\n' +
-	  '   `edroom exits <exitName> <description>`: change the description' +
-	  ' shown when a player `exam`ines the exit.\n   `edroom exits <exitName> goesto <roomId>`:' +
-	  ' either edit or create an exit, and link it to <roomId>. You can do this even if ' +
-	  ' <roomId> does not yet exist, and a fresh room will be created for you.\n' +
-	  '   `edroom exits <exitName> <property> <value>` sets a property like `.hidden`. Please ' +
-	  ' have a good reason for using any other properties. To set a boolean, use `TRUE` or' +
-	  ' `FALSE` in all caps, such as: `edroom exits trapdoor hidden TRUE`.\n' +
-	  '   `edroom exits <exitName> <property>` (with no value) is also valid. This will' +
-	  ' delete a property from an exit, should you want to do that. If the property did not' +
-	  ' previously exist, this form of the command will create the property and set its ' +
-	  ' value to the empty string. Doing it a second time would delete that property.\n' +
- 	  ' `edroom delexit <exitId>`: irreversibly delete an exit. The room it linked to' +
-	  ' will not be altered in any way.\n',
-	access: false,
-	do: function(message, args) {
-		iFic.edroom.do(message, args, BOT);
-	}
-};
-spongeBot.wiztemp = {
-	access: false,
-	help: '(wizards only) create a tempate.\n Use: `wiztemp <"unique id name"> <shortName> <long description>`',
-	do: function(message, args) {
-		iFic.wiztemp.do(message, args);
-	}
-};
-spongeBot.publish = {
-	access: false,
-	help: '(wizards only) publish a pending template',
-	do: function(message, args) {
-		iFic.publish.do(message, args);
-	}
-};
 //-----------------------------------------------------------------------------
 spongeBot.privacy = {
 	help: 'Display or edit your privacy-related options.',
@@ -510,12 +519,6 @@ spongeBot.exam = {
 	}
 };
 spongeBot.examine = spongeBot.exam; // alias
-spongeBot.wiztele = {
-	help: '(Wizards+ only) `wiztele <room>` to teleport to <room>.',
-	do: function(message, args) {
-		iFic.wiztele.do(message, args, BOT);
-	}
-};
 spongeBot.recall = {
 	help: '`recall` Instantly teleports you to a recall point you have set.\n' +
 	'This command is usable once per day. To set your recall point, use `setrecall`.',
@@ -585,6 +588,13 @@ spongeBot.zone = {
 	longHelp: 'See info about the zone you are currently in.',
 	do: function(message, args) {
 		iFic.zone.do(message, args);
+	}
+};
+spongeBot.mail = {
+	help: "Work with MUDmail",
+	longHelp: "Command for working with MUDmail",
+	do: function(message, args) {
+		iFic.mail.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
