@@ -96,6 +96,12 @@ spongeBot.go = {
 		iFic.go.do(message, args, BOT);
 	}
 };
+spongeBot.flee = {
+	help: "If you are in combat, `flee` will let you try to escape.",
+	do: function(message, args) {
+		iFic.flee.do(message, args, BOT);
+	}
+}
 spongeBot.exits = {
 	help: "Use `exits` to view current exits.",
 	do: function(message, args) {
@@ -595,6 +601,13 @@ spongeBot.mail = {
 	longHelp: "Command for working with MUDmail",
 	do: function(message, args) {
 		iFic.mail.do(message, args);
+	}
+};
+spongeBot.post = {
+	help: "Create an envelope for sending MUDmail",
+	longHelp: "Create an envelope for sending MUDmail",
+	do: function(message, args) {
+		iFic.post.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
