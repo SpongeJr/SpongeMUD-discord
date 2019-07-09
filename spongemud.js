@@ -48,7 +48,7 @@ const utils = require('./lib/utils.js');
 const iFic = require('./lib/ific.js');
 //-----------------------------------------------------------------------------
 const hasAccess = function(who, accessArr) {
-	return (who === cons.SPONGE_ID || who === cons.ARCH_ID);
+	return (who === cons.SPONGE_ID);
 };
 spongeBot.time = {
 	help: "Get info on the current MUD world date and time.",
@@ -462,7 +462,22 @@ spongeBot.attack = {
 };
 spongeBot.att = spongeBot.attack; // alias
 spongeBot.kill = spongeBot.attack;  // alias
-
+spongeBot.wield = {
+	help: 'Equip something like a weapon',
+	do: function(message, args) {
+		iFic.wield.do(message, args, BOT);
+	}
+};
+spongeBot.equip = spongeBot.wield; // alias
+spongeBot.eq = spongeBot.equip; // alias
+spongeBot.unwield = {
+	help: 'Unequip something like a weapon',
+	do: function(message, args) {
+		iFic.unwield.do(message, args, BOT);
+	}
+};
+spongeBot.unequip = spongeBot.unwield; // alias
+spongeBot.uneq = spongeBot.unequip // alias
 spongeBot.inv = {
 	help: 'Check your inventory',
 	do: function(message, args) {
