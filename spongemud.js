@@ -410,6 +410,12 @@ spongeBot.craft = {
 		iFic.craft.do(message, args);
 	}
 };
+spongeBot.recipe = {
+	help: 'See a crafting recipe.',
+	do: function(message, args) {
+		iFic.recipe.do(message, args);
+	}
+};
 //-----------------------------------------------------------------------------
 // Direction aliases
 //-----------------------------------------------------------------------------

@@ -1099,12 +1099,12 @@ Battle.prototype.getBattlingPlayers = function() {
 	return this.battlingPlayers;
 };
 Battle.prototype.addParticipants = function() {
-    // add/initialize participants and battle order
-    this.arrivingParticipants.forEach(item => {
-        this.battleOrder.push(item.participant.id);
-        this.participants[item.participant.id] = item;
-    });
-    this.arrivingParticipants = [];
+	// add/initialize participants and battle order
+	this.arrivingParticipants.forEach(item => {
+		this.battleOrder.push(participant.participant.id);
+		this.participants[participant.participant.id] = participant;
+	});
+	this.arrivingParticipants = [];
 };
 Battle.prototype.markParticipantForAddition = function(participant) {
 	// participant a BattleParticipant object
@@ -1126,15 +1126,10 @@ Battle.prototype.removeParticipants = function() {
 Battle.prototype.checkTerminated = function() {
 	// if <= 1 player left, then end battle
 	// TODO: change to if one faction left when we implement factions
-	if (this.battleOrder.length <= 1) {
+	if (this.participants.length <= 1) {
 		return true;
 	}
 	return false;
-};
-Battle.prototype.end = function() {
-    this.battleOrder.forEach(id => {
-        this.participants[id].participant.inBattle = false;
-    });
 };
 //-----------------------------------------------------------------------------
 // ITEM, SCENERYITEM, WEAPON, MOB, ETC.
@@ -1624,7 +1619,6 @@ Mob.prototype.dieStrings = [
 ];
 Mob.prototype.die = function(cause, battles, client) {
 	// cause should be either a String, or a Player object
-	// FUTURE: also support a Mob object
 	
 	let deathString = '';
 	let causeString = '';
@@ -1924,7 +1918,7 @@ const buildPlayers = function(client) {
 			players[player].id = player;
 		}
 	
-		let thePlayer = new Player(players[player], rooms, items, resources, client);
+		let thePlayer = new Player(players[player], rooms, items, resources);
 		if (players[player].posture !== 'asleep') {
 			thePlayer.registerForRoomEvents();
 			thePlayer.registerForWorldTicks(client); // sleeping players don't get worldticks
@@ -2188,26 +2182,19 @@ const BattleParticipant = function(participant, data) {
 	this.leftBattle = false;
 	this.lastAggressor = null;
 	// change to change the target
-	
-	let target = data.nextAction.split(' ');
-	target.shift();
-	this.target = target.join(' ');
+	this.target = data.nextAction.split(' ')[1];
 };
 BattleParticipant.prototype.nextActionSegment = function() {
-    // Step 1: Check if first attack:
-    if (this.previousActionSegment === -Infinity) {
-        return 0; // just attack
-    }
-    // Step 2: Check weapon:
-    let weapon = getWeapon(this.participant.weapon);
-    if (weapon) {
-        return this.previousActionSegment + weapon.delay;
-    }
-    if (this.participant.constructor === Mob) {
-        return this.previousActionSegment + this.participant.data.attack.dmg;
-    } else if (this.participant.constructor === Player) {
-        return this.previousActionSegment + cons.COMBAT.defaultUnarmed.delay;
-    }
+	// Step 1: Check if first attack:
+	if (this.previousActionSegment === -Infinity) {
+		return 0; // just attack
+	}
+	// Step 2: Check weapon:
+	let weapon = getWeapon(this.participant.weapon);
+	if (weapon) {
+		return previousActionSegment + weapon.data.delay;
+	}
+	return previousActionSegment + cons.COMBAT.defaultUnarmed.delay;
 };
 BattleParticipant.prototype.getPlayer = function() {
 	if (this.participant.constructor === Player) {
@@ -2295,47 +2282,39 @@ BattleParticipant.prototype.doAction = function(battle) {
 	}
 	// figure out what they are doing
 	let nextAction = this.nextAction.split(' ');
-    if (nextAction[0] === 'flee') {
-        // handle fleeing
-        let exitTakenName = nextAction[1];
-        let exitTaken;
-        let fleeSuccess;
-        if (this.participant.constructor === Mob) {
-            exitTaken = rooms[this.participant.data.location].data.exits[exitTakenName];
-            fleeSuccess = true;
-        } else if (this.participant.constructor === Player) {
-            exitTaken = rooms[this.participant.location].data.exits[exitTakenName];
-            if (this.lastAggressor) {
-                fleeSuccess = this.participant.flee(battle.participants[this.lastAggressor].participant, exitTaken, battles, this.participant.client);
-            } else {
-				dBug(this.target);
-                fleeSuccess = this.participant.flee(battle.participants[this.target].participant, exitTaken, battles, this.participant.client);
-            }
-        }
-        if (fleeSuccess) {
-            if (this.lastAggressor) {
-                battleStr += `:runner: **${this.getName()}** has successfully fled from ${battle.participants[this.lastAggressor].getName()}!\n`;
-            } else {
-                battleStr += `:runner: **${this.getName()}** has successfully fled from the battle!\n`;
-            }
-            this.leftBattle = true;
-            this.participant.inBattle = false;
-            // player.sendMsg(battleStr, client); // removed so that the player can witness the rest of the battle for this segment
-            return;
+	if (nextAction[0] === 'flee') {
+		// handle fleeing
+		let exitTakenName = nextAction[1];
+		let exitTaken = rooms[player.location].data.exits[exitTakenName];
+		let fleeSuccess;
+		if (this.participant.constructor === Mob) {
+			fleeSuccess = true;
+		} else if (this.participant.constructor === Player) {
+			fleeSuccess = this.participant.flee(target, exitTaken, battles, client);
+		}
+		if (fleeSuccess) {
+			if (this.lastAggressor) {
+				battleStr += `:runner: **${this.getName()}** has successfully fled from ${battle.this.lastAggressor}!\n`;
+			} else {
+				battleStr += `:runner: **${this.getName()}** has successfully fled from the battle!\n`;
+			}
+			this.leftBattle = true;
+			// player.sendMsg(battleStr, client); // removed so that the player can witness the rest of the battle for this segment
+			return;
 		} else {
-			battleStr += `:warning: _**${this.getName()}** tried to flee from the ${battle.participants[this.target].getName()}, but were unable!_\n`;
+			battleStr += `:warning: _**${this.getName()}** tried to flee from the ${battle.participant[this.lastAggressor].getName()}, but were unable!_`;
 		}
 	} else {
 		// handle attacking (if it's not a flee, it's attack, for now)
 		// If target does not exist:
-		if (!battle.participants[this.target]) {
+		if (!battle.participant[this.target]) {
 			return battleStr; // you are not going to get to attack today.
 		}
-		battle.participants[this.target].lastAggressor = this.participant.id; // set self as last aggressor
+		battle.participant[this.target].lastAggressor = this.participant.id; // set self as last aggressor
 		// TODO: (?) Refactor into something like player.attack()
 		
-		battleStr += `**${this.getName()}** attacks **${battle.participants[this.target].getName()}** with its ${weapon.weaponName}`;
-		let defense = battle.participants[this.target].getDefense();
+		battleStr += `**${this.getName()}** attacks **${battle.participant[this.target].getName()}** with its ${weapon.weaponName}`;
+		let defense = battle.participant[this.target].getDefense();
 		let hitChance;
 		if (weapon.attack > defense) {
 			hitChance = 0.5 + 0.5 * (1 - defense / weapon.attack);
@@ -2344,39 +2323,37 @@ BattleParticipant.prototype.doAction = function(battle) {
 		}
 		dBug(`${this.getName()}'s hitChance is ${hitChance}`);
 		
-		if (Math.random() < hitChance) {
+		if (Math.random() < weapon.hitChance) {
 			let damageDealt = ut.rollDice(weapon.dmg);
-			damageDealt = battle.participants[this.target].handleAbsorb(damageDealt);
+			damageDealt = battle.participant[this.target].handleAbsorb(damageDealt);
 			if (damageDealt <= 0) {
-				battleStr += ` but the ${this.participants[this.target].getName()} seems unharmed.\n`;
+				battleStr += ` but the ${this.participant.data.type} seems unharmed.\n`;
 			} else {
 				battleStr += ` and hits for ${damageDealt} damage (${weapon.dmgType})!\n`;
 			}
-			battle.participants[this.target].takeDamage(damageDealt, weapon.dmgType);
-
+			battle.participant[this.target].takeDamage(damageDealt, weapon.dmgType);
+			target.takeDamage(player, damageDealt, weapon.dmgType);
 			// not critical
-			// dBug(`${this.getName()} hit ${battle.participants[this.target].getName()} for ${damageDealt} (${target.data.hp} / ${target.data.maxHp})`);
-			dBug(`${this.getName()} hit ${battle.participants[this.target].getName()} for ${damageDealt}`);
+			// dBug(`${this.getName()} hit ${battle.participant[this.target].getName()} for ${damageDealt} (${target.data.hp} / ${target.data.maxHp})`);
+			dBug(`${this.getName()} hit ${battle.participant[this.target].getName()} for ${damageDealt}`);
 		} else {
 			battleStr += ` but fails to hit!\n`;
 		}
 	}
 	// important to know the previous action segment
-	this.previousActionSegment = battle.segment;
+	battle.participants[participant].previousActionSegment = battle.segment;
 	return battleStr;
 };
-BattleParticipant.prototype.checkDeath = function(battle) {
+BattleParticipant.prototype.checkDeath = function() {
 	let death = false;
 	if (this.participant.constructor === Mob) {
 		death = (this.participant.data.hp <= 0);
 	} else if (this.participant.constructor === Player) {
 		death = (this.participant.stats.hp.current <= 0);
 	}
-
 	if (death) {
 		// we need the last hitting party
-		// TODO: handle mob cause of death lacking client variable
-		this.participant.die(battle.participants[this.lastAggressor].participant, battles, battle.participants[this.lastAggressor].participant.client);
+		this.participant.die(this.lastAggressor, battles, client);
 		this.leftBattle = true;
 		return true;
 	}
@@ -2419,13 +2396,13 @@ const newBattleSegment = function(battle, client) {
 	let battleMessage = ""; // the message sent in this round
 	// for each participant in this battle segment, handle action
 	battle.battleOrder.forEach(participant => {
-		if (battle.segment >= battle.participants[participant].nextActionSegment()) { // >= in case switch to a weapon with a smaller delay
+		if (battle.segment >= battle.battle.participants[participant].nextActionSegment()) { // >= in case switch to a weapon with a smaller delay
 			battleMessage += battle.participants[participant].doAction(battle);
 		}
 	});
 	// for each participant, handle death and leaving battle (fleeing)
 	battle.battleOrder.forEach(participant => {
-		if (battle.participants[participant].checkDeath(battle)) {
+		if (battle.participants[participant].checkDeath()) {
 			battle.markParticipantForRemoval(participant);
 		} else if (battle.participants[participant].leftBattle) {
 			battle.markParticipantForRemoval(participant);
@@ -2433,19 +2410,17 @@ const newBattleSegment = function(battle, client) {
 	});
 	if (battleMessage) {
 		battle.battlingPlayers.forEach(player => {
-			player.sendMsg(battleMessage, client);
+			player.sendMessage(battleMessage);
 		});
 	}
 	battle.removeParticipants();
 	battle.addParticipants();
 	// Setup timer for next battle segment
-    if (!battle.checkTerminated()) {
-        battle.timer = setTimeout(function() {
-            newBattleSegment(battle, client);
-        }, cons.COMBAT.segDelay);
-    } else {
-        battle.end();
-    }
+	if (battle.checkTerminated) {
+		battle.timer = setTimeout(function() {
+			newBattleSegment(battle, client);
+		}, cons.COMBAT.segDelay);
+	}
 };
 const battleSegment = function(battle, client) {
 	let participant;
@@ -2967,38 +2942,31 @@ module.exports = {
 		}
 	},
 	flee: {
-        do: function(message, args, client) {
-            let cmd = 'flee';
-            let who = message.author.id;
-            let minAccess = 'player';
-            let fail = cantDo(who, cmd);
-            if (fail) {
-                ut.chSend(message, fail);
-                return;
-            }
-            let player = players[who];
-            let theMob = null;
-            if (battles[who] && battles[who].participants && battles[who].participants[who] && battles[who].participants[who].target && battles[who].participants[battles[who].participants[who].target]) {
-                theMob = battles[who].participants[battles[who].participants[who].target].participant;
-                if (theMob.constructor !== Mob) {
-                    theMob = null;
-                }
-            }
-            
-            args = args.split(' ');
-            let where = args[0];
-            let pLoc = player.location;
-            let exitTaken;
-            let fledWithoutDirection;
+		do: function(message, args, client) {
+			let cmd = 'flee';
+			let who = message.author.id;
+			let minAccess = 'player';
+			let fail = cantDo(who, cmd);
+			if (fail) {
+				ut.chSend(message, fail);
+				return;
+			}
+			let player = players[who];
+			let theMob = battles[who].target;
+			args = args.split(' ');
+			let where = args[0];
+			let pLoc = player.location;
+			let exitTaken;
+			let fledWithoutDirection;
 
-            if (args[0] === '') {
-                if (!theMob || theMob.data.allowsFleeWithoutDirection) {
-                    fledWithoutDirection = true;
-                } else {
-                    ut.chSend(message, "You need to pick a direction to flee to!");
-                    return;
-                }
-            }
+			if (args[0] === '') {
+				if (theMob.data.allowsFleeWithoutDirection) {
+					fledWithoutDirection = true;
+				} else {
+					ut.chSend(message, "You need to pick a direction to flee to!");
+					return;
+				}
+			}
 
 			if (!fledWithoutDirection) {
 				if (typeof rooms[pLoc].data.exits[where] !== 'undefined') {
@@ -3017,7 +2985,7 @@ module.exports = {
 			// Check for unfleeables? (though 1 in fleeDifficulty does this)
 			
 			ut.chSend(message, "_You try to get away from combat..._");
-			battles[who].participants[who].nextAction = `flee ${exitTaken}`;
+			battles[who].nextAction[who] = `flee ${exitTaken}`;
 		}
 	},
 	exits: {
@@ -3220,7 +3188,7 @@ module.exports = {
 					return;
 				}
 				
-				player = new Player({charName: charName, id: who, posture: "standing", server: server.id}, rooms, items, resources, client);
+				player = new Player({charName: charName, id: who, posture: "standing", server: server.id}, rooms, items, resources);
 				players[who] = player;
 				ut.saveObj(players, cons.MUD.playerFile, {getData: true});
 				outP += ` Welcome to SpongeMUD-Alpha, ${charName}! (${message.author.username}).`;
@@ -3761,15 +3729,15 @@ module.exports = {
 						// set up initial setTimeout
 
 						if (battles[who]) {
-							outP += `You're already engaged in combat!`;
+							outP += `You're already engaged in combat with ${battles[who].target.data.type}!`;
 						} else if (theMob.inBattle) {
-							outP += `**${theMob.data.type}** is already in battle!`;
+							outP += `**${theMob.data.type}** is already in battle against **${players[theMob.inBattle].charName}**!`;
 						} else {
 							pl.inBattle = true;
 							theMob.inBattle = who;
 							
 							let battleId = who;
-
+							
 							battles[battleId] = new Battle({
 								initiator: pl,
 								participants: [
@@ -3792,8 +3760,8 @@ module.exports = {
 									)
 								],
 								timer: setTimeout(function() {
-									ut.chSend(message, `Combat with the ${theMob.data.type} begins!`);
-									newBattleSegment(battles[who], client);
+									ut.chSend(message, `Combat with the ${battles[who].target.data.type} begins!`);
+									battleSegment(battles[who], client);
 								}, cons.COMBAT.segDelay)
 							});
 							/*
@@ -3806,7 +3774,7 @@ module.exports = {
 								}, cons.COMBAT.segDelay)
 							});
 							*/
-							//dBug(battles[battleId]);
+							dBug(battles[battleId]);
 						}
 					}
 				}
