@@ -644,8 +644,8 @@ spongeBot.game = {
 	help: 'For interaction with minigames.',
 	longHelp: 'For interaction with minigames. Use: `game <gameName> <gameCommand>` \n' +
 		' Current minigames:\n `chef`: "Troll cuisine"',
-	do: function(message, args, BOT) {
-		iFic.game.do(message, args);
+	do: function(message, args) {
+		iFic.game.do(message, args, BOT);
 	}
 };
 //-----------------------------------------------------------------------------
