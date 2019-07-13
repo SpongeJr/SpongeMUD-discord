@@ -396,6 +396,13 @@ spongeBot.gather = {
 		iFic.gather.do(message, args);
 	}
 };
+spongeBot.resources = {
+	help: 'Use `resources` to see your resources',
+	do: function(message, args) {
+		iFic.resources.do(message, args);
+	}
+};
+spongeBot.resource = spongeBot.resources;
 spongeBot.claim = {
 	help: '`claim <resource> <# points to spend>`: Lay claim to a resource in the current room.' +
 	  '\nYou can also use this to change the number of points you already have allotted to a resource.' +
