@@ -59,7 +59,7 @@ const findChar = function(nick, room) {
 	}
 	return false;
 };
-
+//-----------------------------------------------------------------------------
 app.get('/api/v1/worldtick', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/worldtick
 	
@@ -71,7 +71,7 @@ app.get('/api/v1/worldtick', (req, res) => {
 		});
 	});
 });
-
+//-----------------------------------------------------------------------------
 app.get('/api/v1/zones/list', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/list
 	
@@ -85,6 +85,7 @@ app.get('/api/v1/zones/list', (req, res) => {
 		});		
 	});
 });
+//-----------------------------------------------------------------------------
 app.get('/api/v1/zones/info', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/info?zone=elementallis
 	
@@ -124,9 +125,7 @@ app.get('/api/v1/zones/info', (req, res) => {
 			info: zoneInfo
 		});
 	});
-
-
-
+//-----------------------------------------------------------------------------
 });
 app.get('/api/v1/zones/players', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/players?zone=startrek
@@ -167,6 +166,31 @@ app.get('/api/v1/zones/players', (req, res) => {
 		});
 	});
 });
+//-----------------------------------------------------------------------------
+const getPlayerAge = function(player) {
+	let pFlags = player.privacyFlags;
+	let noShowAge = false;
+	if (pFlags) {
+		noShowAge = pFlags & cons.PRIVACY_FLAGS.noShowAge;
+	}
+	
+	if (!noShowAge) {
+		return player.age;
+	}
+};
+//-----------------------------------------------------------------------------
+const getPlayerIdle = function(player) {
+	let pFlags = player.privacyFlags;
+	let noShowIdle = false;
+	if (pFlags) {
+		noShowIdle = pFlags & cons.PRIVACY_FLAGS.noShowIdleTicks;
+	}
+	
+	if (!noShowIdle) {
+		return player.idle.ticks;
+	}
+};
+//-----------------------------------------------------------------------------
 app.get('/api/v1/profile', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/profile?who=Meddlon
 
@@ -174,6 +198,7 @@ app.get('/api/v1/profile', (req, res) => {
 	let success;
 	let msg;
 	let profile;
+	let extendedProfile;
 	
 	if (req.query.hasOwnProperty('who')) {
 		who = req.query.who;
@@ -189,19 +214,28 @@ app.get('/api/v1/profile', (req, res) => {
 			success = 'false';
 			msg = 'No such character.';
 		} else {
+			let player = players[match];
 			success = 'true';
 			msg = 'success';
-			profile = players[match].description || "Character has no profile.";
+			profile = player.description || "Character has no profile.";
+			extendedProfile = {
+				"description": profile || "Character has no profile.",
+				"age": getPlayerAge(player),
+				"idle": getPlayerIdle(player),
+				"xp": player.stats.xp,
+				"committees": player.stats.committees
+			}
 		}
-		
+
 		res.status(200).send({
 			success: success,
 			message: msg,
-			profile: profile
+			profile: profile,
+			extendedProfile: extendedProfile
 		});
 	});
 });
-
+//-----------------------------------------------------------------------------
 app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/minigames/chef/nextdish
 	let v = {
@@ -246,7 +280,7 @@ app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 		});
 	});
 });
-
+//-----------------------------------------------------------------------------
 app.get('/api/v1/wizards', (req, res) => {
 	let success = 'true';
 	let msg = 'success';
@@ -266,7 +300,7 @@ app.get('/api/v1/wizards', (req, res) => {
 	  });		
 	});
 });
-
+//-----------------------------------------------------------------------------
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`)
 });
