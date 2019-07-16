@@ -59,6 +59,60 @@ const findChar = function(nick, room) {
 	}
 	return false;
 };
+const isAtLeast = function(player, permLevel) {
+	return (player.stats.accessLevel >= cons.PERM_LEVELS[permLevel]);
+};
+//-----------------------------------------------------------------------------
+app.use('/', function (req, res, next) {
+  let now = new Date().toTimeString().split(' ')[0];
+  console.log(`[${now}] REQUEST IN: ${req.path}`);
+  
+  next();
+});
+//-----------------------------------------------------------------------------
+app.get('/api/v1/topxp', (req, res) => {
+
+	loadFile("players", (players) => {
+		let playerArr = [];
+		let topXpArr = [];
+		let pl;
+		
+		for (let playerId in players) {
+			let charStr;
+			let pl = players[playerId];
+			let profile = {};
+			
+			let pFlags = pl.privacyFlags;
+			
+			if (pFlags) {
+				if (pFlags & cons.PRIVACY_FLAGS.noListScoreTables) {
+					charStr = "UNKNOWN CHARACTER";
+				} else {
+					charStr = pl.charName;
+				}				
+			} else {
+				charStr = pl.charName;
+			}
+
+			profile.xp = pl.stats.xp;
+			profile.charName = charStr;
+			profile.title = cons.TITLE_LIST[pl.title];
+			profile.committees = pl.committees;
+			profile.isWizard = isAtLeast(pl, "wizard");
+			profile.description = pl.description;
+			playerArr.push(profile);
+		}
+		playerArr.sort(ut.objSort("xp", -1));
+		
+		topXpArr = playerArr.slice(0, 20);
+
+		res.status(200).send({
+			success: 'true',
+			message: 'success',
+			players: topXpArr
+		});
+	});
+});
 //-----------------------------------------------------------------------------
 app.get('/api/v1/worldtick', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/worldtick
