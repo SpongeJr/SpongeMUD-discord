@@ -34,15 +34,15 @@ const PORT = 5095;
 app.use(cors());
 
 const loadFile = function(whichFile, callback) {
-	
+
 	let data;
-	
+
 	if (!filePaths[whichFile]) {
 		return;
 	}
-	
+
 	let filename = filePaths[whichFile];
-	
+
 	let file = fs.readFile(filename, "utf8", (err, data) => {
 		data = JSON.parse(data);
 		callback(data);
@@ -51,7 +51,7 @@ const loadFile = function(whichFile, callback) {
 
 const findChar = function(nick, room) {
 	// returns the id that matches with a nick
-	
+
 	for (let plId in players) {
 		if (players[plId].charName === nick) {
 			return plId;
@@ -66,8 +66,36 @@ const isAtLeast = function(player, permLevel) {
 app.use('/', function (req, res, next) {
   let now = new Date().toTimeString().split(' ')[0];
   console.log(`[${now}] REQUEST IN: ${req.path}`);
-  
+
   next();
+});
+//-----------------------------------------------------------------------------
+var sendCmdList = function() {
+	res.status(200).send({
+		success: 'true',
+		message: 'success',
+		commands: "coming soon"
+	});
+};
+//-----------------------------------------------------------------------------
+app.get('/api/v1/commands/', (req, res) => {
+	if (!cmdHelp) {
+		loadFile("cmdHelp", (cmdHelp) => {
+			sendCmdList();
+		});
+	} else {
+		sendCmdList();
+	}
+});
+//-----------------------------------------------------------------------------
+app.get('/api/v1/commands/list', (req, res) => {
+	if (!cmdHelp) {
+		loadFile("cmdHelp", (cmdHelp) => {
+			sendCmdList();
+		});
+	} else {
+		sendCmdList();
+	}
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/topxp', (req, res) => {
@@ -76,20 +104,20 @@ app.get('/api/v1/topxp', (req, res) => {
 		let playerArr = [];
 		let topXpArr = [];
 		let pl;
-		
+
 		for (let playerId in players) {
 			let charStr;
 			let pl = players[playerId];
 			let profile = {};
-			
+
 			let pFlags = pl.privacyFlags;
-			
+
 			if (pFlags) {
 				if (pFlags & cons.PRIVACY_FLAGS.noListScoreTables) {
 					charStr = "UNKNOWN CHARACTER";
 				} else {
 					charStr = pl.charName;
-				}				
+				}
 			} else {
 				charStr = pl.charName;
 			}
@@ -103,7 +131,7 @@ app.get('/api/v1/topxp', (req, res) => {
 			playerArr.push(profile);
 		}
 		playerArr.sort(ut.objSort("xp", -1));
-		
+
 		topXpArr = playerArr.slice(0, 20);
 
 		res.status(200).send({
@@ -116,7 +144,7 @@ app.get('/api/v1/topxp', (req, res) => {
 //-----------------------------------------------------------------------------
 app.get('/api/v1/worldtick', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/worldtick
-	
+
 	loadFile("world", (world) => {
 		res.status(200).send({
 			success: 'true',
@@ -126,29 +154,56 @@ app.get('/api/v1/worldtick', (req, res) => {
 	});
 });
 //-----------------------------------------------------------------------------
-app.get('/api/v1/zones/list', (req, res) => {
-	// http://api.spongemud.com:5095/api/v1/zones/list
-	
+app.get('/api/v1/zones/zonedata', (req, res) => {
+	// http://api.spongemud.com:5095/api/v1/zones/zonedata
+	// how to fail if too big?
+	// success: false, message: 'data too big'?
+	let success;
+	let message;
+	let zonePlayers = {};
 	loadFile("zones", (zones) => {
-		let zoneList = Object.keys(zones);
-
-		res.status(200).send({
-			success: 'true',
-			message: 'success',
-			zones: zoneList
-		});		
+		loadFile("players", function(players) {
+			for (let pl in players) {
+				if (!rooms[players[pl].location]) {
+					console.log(`/zones/players: player.${pl} is in invalid room ${players[pl].location}!`);
+				} else {
+					if (players[pl].posture !== 'asleep') {
+						let playerZone = rooms[players[pl].location].data.zone;
+						let pFlags = players[pl].privacyFlags;
+						let noList = false;
+						if (pFlags) {
+							noList = pFlags & cons.PRIVACY_FLAGS.noListZone;
+						}
+						if (!noList) {
+							if (!zonePlayers[playerZone]) {
+								zonePlayers[playerZone] = [];
+							}
+							zonePlayers[playerZone].push(players[pl].charName);
+							//zonePlayers.push(players[pl].charName);
+						}
+					}
+				}
+			}
+			success = 'true';
+			message = 'success';
+			res.status(200).send({
+				success: success,
+				message: message,
+				zoneData: zonePlayers
+			});
+		});
 	});
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/zones/info', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/info?zone=elementallis
-	
+
 	let zoneList = Object.keys(zones);
 	let zoneInfo;
 	let success;
 	let message;
 	let zone;
-	
+
 	if (req.query.hasOwnProperty('zone')) {
 		zone = req.query.zone;
 	}
@@ -160,7 +215,7 @@ app.get('/api/v1/zones/info', (req, res) => {
 			zoneInfo = Object.assign({}, zones[zone]);
 			let authorIds = zoneInfo.authors;
 			let authorNames = [];
-			
+
 			authorIds.forEach((playerId) => {
 				if (players[playerId]) {
 					authorNames.push(players[playerId].charName || "Unknown player" );
@@ -183,10 +238,10 @@ app.get('/api/v1/zones/info', (req, res) => {
 });
 app.get('/api/v1/zones/players', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/players?zone=startrek
-	
+
 	let zonePlayers = [];
 	let zone;
-	
+
 	if (req.query.hasOwnProperty('zone')) {
 		zone = req.query.zone;
 	} else {
@@ -196,7 +251,7 @@ app.get('/api/v1/zones/players', (req, res) => {
 	loadFile("players", function(players) {
 		for (let pl in players) {
 			if (!rooms[players[pl].location]) {
-				console.log(`/zones/players: player.${pl} is in invalid room ${players[pl].location}!`, 2);
+				console.log(`/zones/players: player.${pl} is in invalid room ${players[pl].location}!`);
 			} else {
 				if (players[pl].posture !== 'asleep') {
 					if (rooms[players[pl].location].data.zone === zone) {
@@ -227,7 +282,7 @@ const getPlayerAge = function(player) {
 	if (pFlags) {
 		noShowAge = pFlags & cons.PRIVACY_FLAGS.noShowAge;
 	}
-	
+
 	if (!noShowAge) {
 		return player.age;
 	}
@@ -239,7 +294,7 @@ const getPlayerIdle = function(player) {
 	if (pFlags) {
 		noShowIdle = pFlags & cons.PRIVACY_FLAGS.noShowIdleTicks;
 	}
-	
+
 	if (!noShowIdle) {
 		return player.idle.ticks;
 	}
@@ -253,17 +308,17 @@ app.get('/api/v1/profile', (req, res) => {
 	let msg;
 	let profile;
 	let extendedProfile;
-	
+
 	if (req.query.hasOwnProperty('who')) {
 		who = req.query.who;
 	} else {
 		// TODO: tell them to specify a character
 	}
-	
+
 	loadFile("players", (players) => {
-	
+
 		let match = findChar(who);
-		
+
 		if (!match) {
 			success = 'false';
 			msg = 'No such character.';
@@ -296,7 +351,7 @@ app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 		"saved": {},
 		"gameCfg": {}
 	};
-	
+
 	let temp
 
 	loadFile("trollGameSaved", (saved) => {
@@ -324,13 +379,13 @@ app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 				if (lessThanHr) { nextDishStr = "less than an hour"; }
 			}
 			nextDishString += nextDishStr;
-			
+
 		  res.status(200).send({
 			success: success,
 			message: msg,
 			nextDishTick: nextDish,
 			nextDishString: nextDishString,
-		  });			
+		  });
 		});
 	});
 });
@@ -339,19 +394,19 @@ app.get('/api/v1/wizards', (req, res) => {
 	let success = 'true';
 	let msg = 'success';
 	let wizards = [];
-	
+
 	loadFile("players", (players) => {
 		for (let pl in players) {
 			if (players[pl].stats.accessLevel >= cons.PERM_LEVELS.wizard) {
 				wizards.push(players[pl].charName);
 			}
 		}
-		
+
 		res.status(200).send({
 			success: success,
 			message: msg,
 			wizards: wizards
-	  });		
+	  });
 	});
 });
 //-----------------------------------------------------------------------------
