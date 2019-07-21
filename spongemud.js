@@ -16,11 +16,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
-const cons = require('./lib/constants.js');
-const Discord = require('discord.js');
-const CONFIG = require('../../' + cons.CFGFILE);
+const cons = require("./lib/constants.js");
+const Discord = require("discord.js");
+const CONFIG = require("../../" + cons.CFGFILE);
 const BOT = new Discord.Client();
-const FS = require('fs');
+const FS = require("fs");
 
 const helpfile = require('./lib/helpfile.json');
 
@@ -44,12 +44,13 @@ const spongeBot = {};
 //-----------------------------------------------------------------------------
 //  MODULES
 //-----------------------------------------------------------------------------
-const utils = require('./lib/utils.js');
-const iFic = require('./lib/ific.js');
+const utils = require("./lib/utils.js");
+const iFic = require("./lib/ific.js");
 //-----------------------------------------------------------------------------
 const hasAccess = function(who, accessArr) {
 	return (who === cons.SPONGE_ID);
 };
+//-----------------------------------------------------------------------------
 spongeBot.time = {
 	help: "Get info on the current MUD world date and time.",
 	do: function(message, args) {
@@ -738,6 +739,19 @@ spongeBot.help = {
 };
 //-----------------------------------------------------------------------------
 BOT.on('ready', () => {
+	
+	// write out the command help file (for API to use, etc.)
+	let cmdHelp = {};
+	for (let cmd in spongeBot) {
+		cmdHelp[cmd] = {
+			"help": spongeBot[cmd].help,
+			"longHelp": spongeBot[cmd].longHelp,
+			"cmdGroup": spongeBot[cmd].cmdGroup,
+			"specialAccess": (typeof spongeBot[cmd].access === "undefined")
+		}
+	}	
+	utils.saveObj(cmdHelp, cons.MUD.helpFile);
+
 	iFic.buildDungeon(); // build dungeon (rooms object)
 	iFic.buildPlayers(BOT); // build players object
 	iFic.buildItems(); // rebuild items global
