@@ -70,10 +70,10 @@ const sendCmdList = function(res) {
 };
 const getCmdHelp = function(cmd) {
 	let result = {};
-	if (cmdHelp.commands.hasOwnProperty(cmd)) {
+	if (cmdHelp.hasOwnProperty(cmd)) {
 		result.success = true;
 		result.message = "success";
-		data = cmdHelp.commands[cmd];
+		result.data = cmdHelp[cmd];
 	} else {
 		result.success = false;
 		result.message = "No such SpongeMUD command."
@@ -101,12 +101,13 @@ app.get('/api/v1/commands/list', (req, res) => {
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/commands/', (req, res) => {
-	// http://api.spongemud.com:5095/api/v1/commands/cmd=
+	// http://api.spongemud.com:5095/api/v1/commands?cmd=joinmud
+	// TODO: refactor to remove the duplication
 
 	let result = {};
 	let success;
 	let message;
-	
+
 	if (req.query.hasOwnProperty('cmd')) {
 		let cmd = req.query.cmd;
 		if (!cmdHelp) {
@@ -115,23 +116,39 @@ app.get('/api/v1/commands/', (req, res) => {
 				result = getCmdHelp(cmd);
 				success = result.success;
 				message = result.message;
+				res.status(200).send({
+					"success": success,
+					"message": message,
+					"data": result.data
+				});
 			});
+			return;
 		} else {
 			result = getCmdHelp(cmd);
 			success = result.success;
 			message = result.message;
+			res.status(200).send({
+				"success": success,
+				"message": message,
+				"data": result.data
+			});
+			return;
 		}
 	} else {
 		success = false;
 		message = "Missing query parameter. Try adding ?cmd="
+		res.status(200).send({
+			"success": success,
+			"message": message,
+			"data": result.data
+		});
+		return;
 	}
 	res.status(200).send({
 		"success": success,
 		"message": message,
 		"data": result.data
 	});
-
-
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/topxp', (req, res) => {
@@ -276,7 +293,7 @@ app.get('/api/v1/zones/players', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/zones/players?zone=startrek
 
 	let zonePlayers = [];
-	let zone;
+	let zone = "";
 
 	if (req.query.hasOwnProperty('zone')) {
 		zone = req.query.zone;
@@ -290,7 +307,7 @@ app.get('/api/v1/zones/players', (req, res) => {
 				console.log(`/zones/players: player.${pl} is in invalid room ${players[pl].location}!`);
 			} else {
 				if (players[pl].posture !== 'asleep') {
-					if (rooms[players[pl].location].data.zone === zone) {
+					if (rooms[players[pl].location].data.zone === zone || zone === "") {
 						let pFlags = players[pl].privacyFlags;
 						let noList = false;
 						if (pFlags) {
@@ -349,6 +366,19 @@ app.get('/api/v1/profile', (req, res) => {
 		who = req.query.who;
 	} else {
 		// TODO: tell them to specify a character
+		res.status(200).send({
+			"success": 'true',
+			"message": 'You are pro-file, yes, I\'m unfortunately pro-folder.',
+			"profile": { "profolder": false },
+			"extendedProfile": [
+				{ "profolder": true },
+				{ "profolder": false },
+				{ "profolder": true },
+				{ "profolder": false },
+				{ "profolder": true },
+				{ "profolder": false }
+			]
+		});
 	}
 
 	loadFile("players", (players) => {
@@ -369,7 +399,7 @@ app.get('/api/v1/profile', (req, res) => {
 				"idle": getPlayerIdle(player),
 				"xp": player.stats.xp,
 				"committees": player.stats.committees
-			}
+			};
 		}
 
 		res.status(200).send({
@@ -379,6 +409,39 @@ app.get('/api/v1/profile', (req, res) => {
 			"extendedProfile": extendedProfile
 		});
 	});
+});
+//-----------------------------------------------------------------------------
+let bubbleFocus = ""; // global
+app.get('/api/v1/bubblefocus', (req, res) => {
+	// http://api.spongemud.com:5095/api/v1/bubblefocus?get
+	// http://api.spongemud.com:5095/api/v1/bubblefocus?set=Element118
+
+	if (req.query.hasOwnProperty('set')) {
+		bubbleFocus = req.query["set"];
+		res.status(200).send({
+			"success": "true",
+			"message": "You have set focus on " + bubbleFocus
+		});
+	} else if (req.query.hasOwnProperty('get')) {
+		if (bubbleFocus) {
+			res.status(200).send({
+				"success": "true",
+				"message": "The person in focus now is " + bubbleFocus,
+				"focus": bubbleFocus
+			});
+		} else {
+			res.status(200).send({
+				"success": "false",
+				"message": "Failed to find the focus"
+			});
+		}
+	} else {
+		res.status(200).send({
+			"success": "true",
+			"message": "The person in focus now is " + bubbleFocus,
+			"focus": bubbleFocus
+		});
+	}
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
@@ -417,10 +480,10 @@ app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 			nextDishString += nextDishStr;
 
 		  res.status(200).send({
-			"success": success,
-			"message": msg,
-			"nextDishTick": nextDish,
-			"nextDishString": nextDishString,
+				"success": success,
+				"message": msg,
+				"nextDishTick": nextDish,
+				"nextDishString": nextDishString,
 		  });
 		});
 	});
@@ -444,6 +507,13 @@ app.get('/api/v1/wizards', (req, res) => {
 			"wizards": wizards
 	  });
 	});
+});
+//-----------------------------------------------------------------------------
+app.get('/api/v1/ping', (req, res) => {
+	res.status(200).send({
+		"success": 'true',
+		"message": "Whoa, you found this! I never expected that!"
+  });
 });
 //-----------------------------------------------------------------------------
 app.listen(PORT, () => {
