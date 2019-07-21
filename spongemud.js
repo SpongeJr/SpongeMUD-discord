@@ -1,4 +1,4 @@
-/* Copyright 2018 Josh Kline ("SpongeJr"), 
+/* Copyright 2018 Josh Kline ("SpongeJr"),
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction,
@@ -107,13 +107,13 @@ spongeBot.exits = {
 	help: "Use `exits` to view current exits.",
 	do: function(message, args) {
 		iFic.exits.do(message, args, BOT);
-	}	
+	}
 };
 spongeBot.exit = {
 	help: "Use `exit <#>` to take a numbered exit.",
 	do: function(message, args) {
 		iFic.exit.do(message, args, BOT);
-	}	
+	}
 };
 spongeBot.ex = spongeBot.exit;
 spongeBot.terse = {
@@ -216,7 +216,7 @@ spongeBot.build = {
 	}
 };
 spongeBot.setaccess = {
-	help: "(Sponges only) setaccess <discordId> <integer>", 
+	help: "(Sponges only) setaccess <discordId> <integer>",
 	do: function(message, args) {
 		iFic.setaccess.do(message, args, BOT);
 	}
@@ -332,7 +332,7 @@ spongeBot.edex = {
 	}
 };
 spongeBot.edroom = {
-	help: '(wizards only, temporary unlocked) edit a room\n' +	
+	help: '(wizards only, temporary unlocked) edit a room\n' +
 	  '_Syntax:_ `edroom <title | description | exits | delexit`',
 	longHelp: ' ** edroom help **\n `edroom <title | description | exits | delexit>`\n' +
 	  ' Use this command to edit the current room\'s title, description, or exits.' +
@@ -539,7 +539,7 @@ spongeBot.use = {
 	help: '`use <item>` to use something.',
 	do: function(message, args) {
 		iFic.use.do(message, args, BOT);
-	}	
+	}
 };
 spongeBot.list = {
 	help: '`list <matchString>` show all items, exits, mobs, and characters matching the string.',
@@ -685,15 +685,15 @@ spongeBot.server = {
 	cmdGroup: 'Miscellaneous',
 	do: function(message) {
 		let server = message.guild;
-		
+
 		if (!server) {
 			utils.auSend(message, ' Doesn\'t look like you sent me that message on _any_ server!');
 			return;
 		}
-		
+
 		let str = ` You are on ${server.name}, which has the id: ${server.id}` +
 		  `. It was created on: ${server.createdAt}.`;
-		
+
 		utils.chSend(message, str);
 	},
 	help: 'Gives info about the server on which you send me the command.'
@@ -702,7 +702,7 @@ spongeBot.help = {
 	do: function(message, args) {
 		let outStr;
 		if (args) {
-			if (typeof spongeBot[args] !== 'undefined') {	
+			if (typeof spongeBot[args] !== 'undefined') {
 				if (spongeBot[args].longHelp) {
 					utils.chSend(message, spongeBot[args].longHelp);
 				} else if (spongeBot[args].help) {
@@ -711,9 +711,9 @@ spongeBot.help = {
 					utils.chSend(message, 'I have no help about that.');
 				}
 			} else {
-				
+
 				// do check for other help topics...
-				
+
 				utils.chSend(message, 'That is not a command I know.');
 			}
 		} else {
@@ -722,7 +722,7 @@ spongeBot.help = {
 			  ' for more information about a command. More help to come on ' +
 			  ' other topics. \n\nMore help also available at ' +
 			  ' http://www.spongemud.com/help/\n\n';
-			
+
 			for (let cmd in spongeBot) {
 				if (spongeBot[cmd].access) {
 					// special access imm command hard block
@@ -739,7 +739,7 @@ spongeBot.help = {
 };
 //-----------------------------------------------------------------------------
 BOT.on('ready', () => {
-	
+
 	// write out the command help file (for API to use, etc.)
 	let cmdHelp = {};
 	for (let cmd in spongeBot) {
@@ -747,9 +747,9 @@ BOT.on('ready', () => {
 			"help": spongeBot[cmd].help,
 			"longHelp": spongeBot[cmd].longHelp,
 			"cmdGroup": spongeBot[cmd].cmdGroup,
-			"specialAccess": (typeof spongeBot[cmd].access === "undefined")
+			"specialAccess": !(typeof spongeBot[cmd].access === "undefined")
 		}
-	}	
+	}
 	utils.saveObj(cmdHelp, cons.MUD.helpFile);
 
 	iFic.buildDungeon(); // build dungeon (rooms object)
@@ -759,7 +759,7 @@ BOT.on('ready', () => {
 	debugPrint(`SpongeMUD version ${cons.VERSION_STRING} READY!`);
 	BOT.user.setActivity(`${cons.PREFIX}joinmud   (if you dare!)`, { type: 'PLAYING' });
 	if (Math.random() < 0.01) {BOT.channels.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
-	
+
 	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
 });
 
@@ -768,10 +768,10 @@ BOT.on('rateLimit', (info) => {
     console.log(JSON.stringify(info));
 	/*
     info = JSON.stringify(info);
-	
+
 	// get channel id from info.path and get a Channel object:
     const channel = BOT.channels.get(info.split("/channels")[1].split("/")[1]);
-	
+
     //console.log(channel);
     ut.messageQueue.setSlowMode(channel, info.timeDifference);
 	*/
@@ -795,12 +795,12 @@ BOT.on('message', message => {
 			if (isNaN(parseInt(theCmd)) && theCmd !== cons.PLAYER_MACRO_LETTER) {
 				return; // nope, not a number, either, so fail out of here
 			} else {
-				
-				isMenu = (theCmd !== cons.PLAYER_MACRO_LETTER);			
+
+				isMenu = (theCmd !== cons.PLAYER_MACRO_LETTER);
 				if (!isMenu) {
 					// if it's a player macro, replace theCmd with everything after the "macro letter"]
 					theCmd = args;
-				}			
+				}
 				let newFullCmd = iFic.macro.do(message, theCmd, isMenu);
 				if (newFullCmd) {
 					let newCmd = newFullCmd.split(' ')[0];
@@ -818,7 +818,7 @@ BOT.on('message', message => {
 
 		if (typeof spongeBot[theCmd] !== 'undefined') {
 			debugPrint(`  @${message.author.id}: ${theCmd} (${args})`);
-			
+
 			if (!spongeBot[theCmd].disabled) {
 				if (spongeBot[theCmd].access) {
 					// requires special access
@@ -836,7 +836,7 @@ BOT.on('message', message => {
 						}
 					}
 				} else {
-					
+
 					if (message.author.bot) {
 						debugPrint('Blocked a bot-to-bot !command.');
 					} else {
