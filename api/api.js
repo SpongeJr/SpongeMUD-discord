@@ -6,6 +6,7 @@ const filePaths = {
 	"players": "../../data/spongemud/players.json",
 	"zones": "../../data/spongemud/zones.json",
 	"rooms": "../../data/spongemud/rooms.json",
+	"cmdHelp": "../../data/spongemud/cmdhelp.json",
 	"trollGameSaved":  trollGameDataPath + "trollgamesaved.json",
 	"trollGameData":  trollGameDataPath + "trollgamedata.json"
 };
@@ -16,7 +17,7 @@ const rooms = require('../../data/spongemud/rooms.json');
 const cons = require('../lib/constants.js');
 const ut = require('../lib/utils.js');
 const fs = require('fs');
-
+let cmdHelp;
 /*
 const savefile = 'trollgamesaved.json';
 const datafile = 'trollgamedata.json';
@@ -70,31 +71,38 @@ app.use('/', function (req, res, next) {
   next();
 });
 //-----------------------------------------------------------------------------
-var sendCmdList = function() {
+var sendCmdList = function(res) {
+
+	console.log(cmdHelp);
+
 	res.status(200).send({
 		success: 'true',
 		message: 'success',
-		commands: "coming soon"
+		commands: cmdHelp
 	});
 };
 //-----------------------------------------------------------------------------
-app.get('/api/v1/commands/', (req, res) => {
+app.get('/api/v1/commands/list', (req, res) => {
+	// http://api.spongemud.com:5095/api/v1/commands/list
 	if (!cmdHelp) {
-		loadFile("cmdHelp", (cmdHelp) => {
-			sendCmdList();
+		loadFile("cmdHelp", (help) => {
+			cmdHelp = help;
+			sendCmdList(res);
 		});
 	} else {
-		sendCmdList();
+		sendCmdList(res);
 	}
 });
 //-----------------------------------------------------------------------------
-app.get('/api/v1/commands/list', (req, res) => {
+app.get('/api/v1/commands/', (req, res) => {
+	// http://api.spongemud.com:5095/api/v1/commands
 	if (!cmdHelp) {
-		loadFile("cmdHelp", (cmdHelp) => {
-			sendCmdList();
+		loadFile("cmdHelp", (help) => {
+			cmdHelp = help;
+			sendCmdList(res);
 		});
 	} else {
-		sendCmdList();
+		sendCmdList(res);
 	}
 });
 //-----------------------------------------------------------------------------
