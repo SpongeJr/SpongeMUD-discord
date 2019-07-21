@@ -33,7 +33,7 @@ const app = express();
 const PORT = 5095;
 
 app.use(cors());
-
+//-----------------------------------------------------------------------------
 const loadFile = function(whichFile, callback) {
 
 	let data;
@@ -49,10 +49,8 @@ const loadFile = function(whichFile, callback) {
 		callback(data);
 	});
 };
-
 const findChar = function(nick, room) {
 	// returns the id that matches with a nick
-
 	for (let plId in players) {
 		if (players[plId].charName === nick) {
 			return plId;
@@ -63,6 +61,25 @@ const findChar = function(nick, room) {
 const isAtLeast = function(player, permLevel) {
 	return (player.stats.accessLevel >= cons.PERM_LEVELS[permLevel]);
 };
+const sendCmdList = function(res) {
+	res.status(200).send({
+		success: 'true',
+		message: 'success',
+		commands: cmdHelp
+	});
+};
+const getCmdHelp = function(cmd) {
+	let result = {};
+	if (cmdHelp.commands.hasOwnProperty(cmd)) {
+		result.success = true;
+		result.message = "success";
+		data = cmdHelp.commands[cmd];
+	} else {
+		result.success = false;
+		result.message = "No such SpongeMUD command."
+	}
+	return result;
+};
 //-----------------------------------------------------------------------------
 app.use('/', function (req, res, next) {
   let now = new Date().toTimeString().split(' ')[0];
@@ -70,17 +87,6 @@ app.use('/', function (req, res, next) {
 
   next();
 });
-//-----------------------------------------------------------------------------
-var sendCmdList = function(res) {
-
-	console.log(cmdHelp);
-
-	res.status(200).send({
-		success: 'true',
-		message: 'success',
-		commands: cmdHelp
-	});
-};
 //-----------------------------------------------------------------------------
 app.get('/api/v1/commands/list', (req, res) => {
 	// http://api.spongemud.com:5095/api/v1/commands/list
@@ -95,15 +101,37 @@ app.get('/api/v1/commands/list', (req, res) => {
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/commands/', (req, res) => {
-	// http://api.spongemud.com:5095/api/v1/commands
-	if (!cmdHelp) {
-		loadFile("cmdHelp", (help) => {
-			cmdHelp = help;
-			sendCmdList(res);
-		});
+	// http://api.spongemud.com:5095/api/v1/commands/cmd=
+
+	let result = {};
+	let success;
+	let message;
+	
+	if (req.query.hasOwnProperty('cmd')) {
+		let cmd = req.query.cmd;
+		if (!cmdHelp) {
+			loadFile("cmdHelp", (help) => {
+				cmdHelp = help;
+				result = getCmdHelp(cmd);
+				success = result.success;
+				message = result.message;
+			});
+		} else {
+			result = getCmdHelp(cmd);
+			success = result.success;
+			message = result.message;
+		}
 	} else {
-		sendCmdList(res);
+		success = false;
+		message = "Missing query parameter. Try adding ?cmd="
 	}
+	res.status(200).send({
+		"success": success,
+		"message": message,
+		"data": result.data
+	});
+
+
 });
 //-----------------------------------------------------------------------------
 app.get('/api/v1/topxp', (req, res) => {
@@ -143,9 +171,9 @@ app.get('/api/v1/topxp', (req, res) => {
 		topXpArr = playerArr.slice(0, 20);
 
 		res.status(200).send({
-			success: 'true',
-			message: 'success',
-			players: topXpArr
+			"success": 'true',
+			"message": 'success',
+			"players": topXpArr
 		});
 	});
 });
@@ -155,9 +183,9 @@ app.get('/api/v1/worldtick', (req, res) => {
 
 	loadFile("world", (world) => {
 		res.status(200).send({
-			success: 'true',
-			message: 'success',
-			worldtick: world.time.tickCount
+			"success": 'true',
+			"message": 'success',
+			"worldtick": world.time.tickCount
 		});
 	});
 });
@@ -195,9 +223,9 @@ app.get('/api/v1/zones/zonedata', (req, res) => {
 			success = 'true';
 			message = 'success';
 			res.status(200).send({
-				success: success,
-				message: message,
-				zoneData: zonePlayers
+				"success": success,
+				"message": message,
+				"zoneData": zonePlayers
 			});
 		});
 	});
@@ -237,9 +265,9 @@ app.get('/api/v1/zones/info', (req, res) => {
 		}
 
 		res.status(200).send({
-			success: success,
-			message: message,
-			info: zoneInfo
+			"success": success,
+			"message": message,
+			"info": zoneInfo
 		});
 	});
 //-----------------------------------------------------------------------------
@@ -277,9 +305,9 @@ app.get('/api/v1/zones/players', (req, res) => {
 		}
 
 		res.status(200).send({
-			success: 'true',
-			message: 'success',
-			players: zonePlayers
+			"success": 'true',
+			"message": 'success',
+			"players": zonePlayers
 		});
 	});
 });
@@ -345,10 +373,10 @@ app.get('/api/v1/profile', (req, res) => {
 		}
 
 		res.status(200).send({
-			success: success,
-			message: msg,
-			profile: profile,
-			extendedProfile: extendedProfile
+			"success": success,
+			"message": msg,
+			"profile": profile,
+			"extendedProfile": extendedProfile
 		});
 	});
 });
@@ -389,10 +417,10 @@ app.get('/api/v1/minigames/chef/nextdish', (req, res) => {
 			nextDishString += nextDishStr;
 
 		  res.status(200).send({
-			success: success,
-			message: msg,
-			nextDishTick: nextDish,
-			nextDishString: nextDishString,
+			"success": success,
+			"message": msg,
+			"nextDishTick": nextDish,
+			"nextDishString": nextDishString,
 		  });
 		});
 	});
@@ -411,9 +439,9 @@ app.get('/api/v1/wizards', (req, res) => {
 		}
 
 		res.status(200).send({
-			success: success,
-			message: msg,
-			wizards: wizards
+			"success": success,
+			"message": msg,
+			"wizards": wizards
 	  });
 	});
 });
