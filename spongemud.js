@@ -45,6 +45,8 @@ const spongeBot = {};
 //  MODULES
 //-----------------------------------------------------------------------------
 const utils = require("./lib/utils.js");
+utils.setClient(BOT); // Just to make sure the client is set
+utils.setDiscord(Discord); // to make sure discord is set
 const iFic = require("./lib/ific.js");
 //-----------------------------------------------------------------------------
 const hasAccess = function(who, accessArr) {
@@ -67,7 +69,7 @@ spongeBot.joinmud = {
 	help: "Joins SpongeMUD (wakes your character up if asleep, " +
 	  " or creates a new character if you don't have one.",
 	do: function(message, args) {
-		iFic.joinmud.do(message, args, BOT);
+		iFic.joinmud.do(message, args);
 	}
 };
 spongeBot.exitmud = {
@@ -76,43 +78,43 @@ spongeBot.exitmud = {
 	" saying things, and any other forms of DMs from SpongeMUD until you log" +
 	" back on using `joinmud`",
 	do: function(message, args) {
-		iFic.exitmud.do(message, args, BOT);
+		iFic.exitmud.do(message, args);
 	}
 };
 spongeBot.get = {
 	help: "`get <item>` to pick something up",
 	do: function(message, args) {
-		iFic.get.do(message, args, BOT);
+		iFic.get.do(message, args);
 	}
 };
 spongeBot.wizget = {
 	help: "Wizards can use `wizget <item>` to pick up scenery items.",
 	do: function(message, args) {
-		iFic.wizget.do(message, args, BOT);
+		iFic.wizget.do(message, args);
 	}
 };
 spongeBot.go = {
 	help: "`go <exit>` to move to a different location.",
 	do: function(message, args) {
-		iFic.go.do(message, args, BOT);
+		iFic.go.do(message, args);
 	}
 };
 spongeBot.flee = {
 	help: "If you are in combat, `flee` will let you try to escape.",
 	do: function(message, args) {
-		iFic.flee.do(message, args, BOT);
+		iFic.flee.do(message, args);
 	}
-}
+};
 spongeBot.exits = {
 	help: "Use `exits` to view current exits.",
 	do: function(message, args) {
-		iFic.exits.do(message, args, BOT);
+		iFic.exits.do(message, args);
 	}
 };
 spongeBot.exit = {
 	help: "Use `exit <#>` to take a numbered exit.",
 	do: function(message, args) {
-		iFic.exit.do(message, args, BOT);
+		iFic.exit.do(message, args);
 	}
 };
 spongeBot.ex = spongeBot.exit;
@@ -120,7 +122,7 @@ spongeBot.terse = {
 	help: "Switch between terse and verbose room descriptions " +
 	  " when travelling. `look` will always show the verbose description.",
 	do: function(message, args) {
-		iFic.terse.do(message, args, BOT);
+		iFic.terse.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -136,19 +138,19 @@ spongeBot.savemud = {
 spongeBot.represent = {
 	help: "`represent` lets you opt-in or opt-out of generating fame for your server.",
 	do: function(message, args) {
-		iFic.represent.do(message, args, BOT);
+		iFic.represent.do(message, args);
 	}
 };
 spongeBot.topfame = {
 	help: "Lets you see the top servers in fame",
 	do: function(message, args) {
-		iFic.topfame.do(message, args, BOT);
+		iFic.topfame.do(message, args);
 	}
 };
 spongeBot.topxp = {
 	help: "Lets you see the top players by XP",
 	do: function(message, args) {
-		iFic.topxp.do(message, args, BOT);
+		iFic.topxp.do(message, args);
 	}
 };
 spongeBot.backup = {
@@ -199,7 +201,7 @@ spongeBot.peek = {
 	access: [],
 	help: "`(immortals only) `peek <roomId>` to have a look around!",
 	do: function(message, args) {
-		iFic.peek.do(message,args);
+		iFic.peek.do(message, args);
 	}
 };
 spongeBot.pcalc = {
@@ -218,25 +220,25 @@ spongeBot.build = {
 spongeBot.setaccess = {
 	help: "(Sponges only) setaccess <discordId> <integer>",
 	do: function(message, args) {
-		iFic.setaccess.do(message, args, BOT);
+		iFic.setaccess.do(message, args);
 	}
 };
 spongeBot.icanhaz = {
 	help: "(Wizards+) `icanhaz <zonename>` to get the raw data of a zone you author",
 	do: function(message, args) {
-		iFic.icanhaz.do(message, args, BOT, Discord);
+		iFic.icanhaz.do(message, args);
 	}
 };
 spongeBot.nukemyzone = {
 	help: "(Wizards+) `nuke <zonename>` to TOTALLY WIPE OUT YOUR ZONE SERIOUSLY FOR REAL",
 	do: function(message, args) {
-		iFic.nukemyzone.do(message, args, BOT, Discord);
+		iFic.nukemyzone.do(message, args);
 	}
 };
 spongeBot.getfile = {
 	help: "(Developer+ only) (you should know the syntax)",
 	do: function(message, args) {
-		iFic.getfile.do(message, args, BOT, Discord);
+		iFic.getfile.do(message, args);
 	}
 };
 spongeBot.nuke = {
@@ -268,13 +270,13 @@ spongeBot.who = {
 spongeBot.worldsay = {
 	help: '(immortals only) broadcast a message to the world',
 	do: function(message, args) {
-		iFic.worldsay.do(message, args, BOT);
+		iFic.worldsay.do(message, args);
 	}
 };
 spongeBot.worldcast = {
 	help: '(immortals only) broadcast a message to the world',
 	do: function(message, args) {
-		iFic.worldcast.do(message, args, BOT);
+		iFic.worldcast.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -328,7 +330,7 @@ spongeBot.edex = {
 	help: '(wizards only) shortcut for `edroom exits',
 	longHelp: 'Use this as an alias/shortcut for the wizard command `edroom exits `...',
 	do: function(message, args) {
-		iFic.edroom.do(message, "exits " + args, BOT);
+		iFic.edroom.do(message, "exits " + args);
 	}
 };
 spongeBot.edroom = {
@@ -359,7 +361,7 @@ spongeBot.edroom = {
 	  ' will not be altered in any way.\n',
 	access: false,
 	do: function(message, args) {
-		iFic.edroom.do(message, args, BOT);
+		iFic.edroom.do(message, args);
 	}
 };
 spongeBot.wiztemp = {
@@ -379,7 +381,7 @@ spongeBot.publish = {
 spongeBot.wiztele = {
 	help: '(Wizards+ only) `wiztele <room>` to teleport to <room>.',
 	do: function(message, args) {
-		iFic.wiztele.do(message, args, BOT);
+		iFic.wiztele.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -471,7 +473,7 @@ spongeBot.d = spongeBot.down;
 spongeBot.attack = {
 	help: 'Attack another character or mob! (WIP)',
 	do: function(message, args) {
-		iFic.attack.do(message, args, BOT);
+		iFic.attack.do(message, args);
 	}
 };
 spongeBot.att = spongeBot.attack; // alias
@@ -479,7 +481,7 @@ spongeBot.kill = spongeBot.attack;  // alias
 spongeBot.wield = {
 	help: 'Equip something like a weapon',
 	do: function(message, args) {
-		iFic.wield.do(message, args, BOT);
+		iFic.wield.do(message, args);
 	}
 };
 spongeBot.equip = spongeBot.wield; // alias
@@ -487,7 +489,7 @@ spongeBot.eq = spongeBot.equip; // alias
 spongeBot.unwield = {
 	help: 'Unequip something like a weapon',
 	do: function(message, args) {
-		iFic.unwield.do(message, args, BOT);
+		iFic.unwield.do(message, args);
 	}
 };
 spongeBot.unequip = spongeBot.unwield; // alias
@@ -501,44 +503,44 @@ spongeBot.inv = {
 spongeBot.say = {
 	help: 'speak to those in the same location',
 	do: function(message, args) {
-		iFic.say.do(message, args, BOT);
+		iFic.say.do(message, args);
 	}
 };
 spongeBot.yell = {
 	help: 'yell to those in the same zone as you',
 	do: function(message, args) {
-		iFic.yell.do(message, args, BOT);
+		iFic.yell.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
 spongeBot.privacy = {
 	help: 'Display or edit your privacy-related options.',
 	do: function(message, args) {
-		iFic.privacy.do(message, args, BOT);
+		iFic.privacy.do(message, args);
 	}
 };
 spongeBot.autolog = {
 	help: 'Toggles automatically logging your character out after a time.',
 	do: function(message, args) {
-		iFic.autolog.do(message, args, BOT);
+		iFic.autolog.do(message, args);
 	}
 };
 spongeBot.drop = {
 	help: '`drop <item>` to drop something into the room.',
 	do: function(message, args) {
-		iFic.drop.do(message, args, BOT);
+		iFic.drop.do(message, args);
 	}
 };
 spongeBot.crush = {
 	help: '`crush <item>` to destroy an item in your inventory.',
 	do: function(message, args) {
-		iFic.crush.do(message, args, BOT);
+		iFic.crush.do(message, args);
 	}
 };
 spongeBot.use = {
 	help: '`use <item>` to use something.',
 	do: function(message, args) {
-		iFic.use.do(message, args, BOT);
+		iFic.use.do(message, args);
 	}
 };
 spongeBot.list = {
@@ -558,32 +560,32 @@ spongeBot.recall = {
 	help: '`recall` Instantly teleports you to a recall point you have set.\n' +
 	'This command is usable once per day. To set your recall point, use `setrecall`.',
 	do: function(message, args) {
-		iFic.recall.do(message, args, BOT);
+		iFic.recall.do(message, args);
 	}
 };
 spongeBot.setrecall = {
 	help: '`setrecall` sets your recall point for use with `recall`\n' +
 	'Note: Only some rooms may be set as recall points.',
 	do: function(message, args) {
-		iFic.setrecall.do(message, args, BOT);
+		iFic.setrecall.do(message, args);
 	}
 };
 spongeBot.sit = {
 	help: "Sits down, or stands up if you're already sitting.",
-	do: (message, args) => {
-		iFic.sit.do(message, args, BOT);
+	do: function(message, args) {
+		iFic.sit.do(message, args);
 	}
 };
 spongeBot.stand = {
 	help: 'Stands up, if you aren\'t already.',
-	do: (message, args) => {
-		iFic.stand.do(message, args, BOT);
+	do: function(message, args) {
+		iFic.stand.do(message, args);
 	}
 };
 spongeBot.me = {
 	help: 'Perform a "generic action", for role-playing.',
 	do: function(message, args) {
-		iFic.me.do(message, args, BOT);
+		iFic.me.do(message, args);
 	}
 };
 spongeBot.title = {
@@ -595,7 +597,7 @@ spongeBot.title = {
 spongeBot.profile = {
 	help: "Use `profile <character>` to view another charcter's profile",
 	do: function(message, args) {
-		iFic.profile.do(message, args, BOT);
+		iFic.profile.do(message, args);
 	}
 };
 spongeBot.setprofile = {
@@ -646,7 +648,7 @@ spongeBot.game = {
 	longHelp: 'For interaction with minigames. Use: `game <gameName> <gameCommand>` \n' +
 		' Current minigames:\n `chef`: "Troll cuisine"',
 	do: function(message, args) {
-		iFic.game.do(message, args, BOT);
+		iFic.game.do(message, args);
 	}
 };
 //-----------------------------------------------------------------------------
@@ -662,7 +664,7 @@ spongeBot.setmacro = {
 	help: 'Use to set a personal macro.',
 	longHelp: 'Use `setmacro <#> <command>` to set a personal macro that you then ' +
 		`can activate using \`${cons.PLAYER_MACRO_LETTER} <#>\` at any time`,
-	do: function(message, args, BOT) {
+	do: function(message, args) {
 		iFic.setmacro.do(message, args);
 	}
 };
@@ -753,14 +755,14 @@ BOT.on('ready', () => {
 	utils.saveObj(cmdHelp, cons.MUD.helpFile);
 
 	iFic.buildDungeon(); // build dungeon (rooms object)
-	iFic.buildPlayers(BOT); // build players object
+	iFic.buildPlayers(); // build players object
 	iFic.buildItems(); // rebuild items global
 	iFic.buildMobs();
 	debugPrint(`SpongeMUD version ${cons.VERSION_STRING} READY!`);
 	BOT.user.setActivity(`${cons.PREFIX}joinmud   (if you dare!)`, { type: 'PLAYING' });
 	if (Math.random() < 0.01) {BOT.channels.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
 
-	iFic.initTimers(BOT); // kick off all the ticks and timers and stuff
+	iFic.initTimers(); // kick off all the ticks and timers and stuff
 });
 
 BOT.on('rateLimit', (info) => {
