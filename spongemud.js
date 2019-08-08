@@ -634,9 +634,17 @@ spongeBot.mail = {
 		iFic.mail.do(message, args);
 	}
 };
+spongeBot.write = {
+	help: "Use `write <your whole letter here>` to write a letter to be sent later with `post`.",
+	longHelp: "Use `write <your letter>` to write a letter to be sent with the `post` command at a Postpigeon's Roost.",
+	do: function(message, args) {
+		iFic.write.do(message, args);
+	}
+};
 spongeBot.post = {
-	help: "Create an envelope for sending MUDmail",
-	longHelp: "Create an envelope for sending MUDmail",
+	help: "Use `post <recipient> <subject> to send off a letter you've previously written using `write`.",
+	longHelp: "At a Postpigeon's Roost, use `post <recipient> <subject>` " +
+	  "to send off a letter you've previously written using `write`.",
 	do: function(message, args) {
 		iFic.post.do(message, args);
 	}
