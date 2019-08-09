@@ -589,13 +589,13 @@ spongeBot.me = {
 	}
 };
 spongeBot.title = {
-	help: 'Set your characters title, or set no title. Try `title` by itself for more help.',
+	help: 'Set your character\'s title, or set no title. Try `title` by itself for more help.',
 	do: function(message, args) {
 		iFic.title.do(message, args);
 	}
 };
 spongeBot.profile = {
-	help: "Use `profile <character>` to view another charcter's profile",
+	help: "Use `profile <character>` to view another character's profile",
 	do: function(message, args) {
 		iFic.profile.do(message, args);
 	}
@@ -608,7 +608,7 @@ spongeBot.setprofile = {
 	}
 };
 spongeBot.age = {
-	help: 'age <character> reveal a charcter\'s age in ticks',
+	help: 'age <character> reveal a character\'s age in ticks',
 	do: function(message, args) {
 		iFic.age.do(message, args);
 	}
@@ -625,6 +625,20 @@ spongeBot.zone = {
 	longHelp: 'See info about the zone you are currently in.',
 	do: function(message, args) {
 		iFic.zone.do(message, args);
+	}
+};
+spongeBot.friend = {
+	help: "Add a friend.",
+	longHelp: "Use `friend <character name>` to add a friend.",
+	do: function(message, args) {
+		iFic.friend.do(message, args);
+	}
+};
+spongeBot.unfriend = {
+	help: "Remove a friend.",
+	longHelp: "Use `unfriend <character name>` to remove a friend.",
+	do: function(message, args) {
+		iFic.unfriend.do(message, args);
 	}
 };
 spongeBot.mail = {
