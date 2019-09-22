@@ -642,8 +642,34 @@ spongeBot.unfriend = {
 	}
 };
 spongeBot.mail = {
-	help: "Work with MUDmail",
-	longHelp: "Command for working with MUDmail",
+	subcommands: {
+		read: {
+			help: "Read a particular message. Use `mail read <number>`.",
+			do: function(message, args) {
+				iFic.mail.do(message, "read "+args);
+			}
+		},
+		list: {
+			help: "List all mail. Use `mail list`.",
+			do: function(message, args) {
+				iFic.mail.do(message, "list "+args);
+			}
+		},
+		delete: {
+			help: "Delete a particular message. Use `mail delete <number>`.",
+			do: function(message, args) {
+				iFic.mail.do(message, "delete "+args);
+			}
+		},
+		undelete: {
+			help: "Undelete your mail. Use `mail undelete`.",
+			do: function(message, args) {
+				iFic.mail.do(message, "undelete "+args);
+			}
+		}
+	},
+	help: "List all mail.",
+	longHelp: "List all mail. Use `mail` or `mail list` to list your mail.",
 	do: function(message, args) {
 		iFic.mail.do(message, args);
 	}
@@ -726,19 +752,34 @@ spongeBot.help = {
 	do: function(message, args) {
 		let outStr;
 		if (args) {
-			if (typeof spongeBot[args] !== 'undefined') {
-				if (spongeBot[args].longHelp) {
-					utils.chSend(message, spongeBot[args].longHelp);
-				} else if (spongeBot[args].help) {
-					utils.chSend(message, spongeBot[args].help);
+			let command = findCommand(message, args.split(" "));
+			if (command) { // has command
+				let helpOutput = `**${command.name}**:\n`;
+				if (command.command.longHelp) {
+					helpOutput += command.command.longHelp;
+				} else if (command.command.help) {
+					helpOutput += command.command.help;
 				} else {
-					utils.chSend(message, 'I have no help about that.');
+					helpOutput += "No help available for this command.";
 				}
+				if (command.command.subcommands) {
+					let subcommandText = "\n\nSubcommands available:\n";
+					for (let cmd in command.command.subcommands) {
+						if (command.command.subcommands[cmd].access) {
+							// special access imm command hard block
+							if (hasAccess(message.author.id, command.command.subcommands[cmd].access)) {
+								subcommandText += '   _`' + cmd + '`_';
+							}
+						} else {
+							subcommandText += '   `' + cmd + '`';
+						}
+					}
+					helpOutput += subcommandText;
+				}
+				utils.chSend(message, helpOutput);
 			} else {
-
 				// do check for other help topics...
-
-				utils.chSend(message, 'That is not a command I know.');
+				utils.chSend(message, 'Not a command I know, ' + message.author);
 			}
 		} else {
 			outStr = ' ** SpongeMUD Help ** _(WIP)_\n\n' +
@@ -750,7 +791,7 @@ spongeBot.help = {
 			for (let cmd in spongeBot) {
 				if (spongeBot[cmd].access) {
 					// special access imm command hard block
-					if (message.author.id === cons.SPONGE_ID) {
+					if (hasAccess(message.author.id, spongeBot[cmd].access)) {
 						outStr += '   _`' + cmd + '`_';
 					}
 				} else {
@@ -761,6 +802,7 @@ spongeBot.help = {
 		}
 	}
 };
+
 //-----------------------------------------------------------------------------
 BOT.on('ready', () => {
 
@@ -801,77 +843,97 @@ BOT.on('rateLimit', (info) => {
 	*/
 });
 //-----------------------------------------------------------------------------
+// Find a command, return command object and remaining arguments
+let findCommand = function(message, args, commandList) {
+	if (!commandList) commandList = spongeBot;
+	let theCmd = args[0].toLowerCase();
+	if (typeof commandList[theCmd] !== 'undefined') {
+		//debugPrint(`  @${message.author.id}: ${theCmd} (${args.slice(1)})`);
+
+		// check for subcommands and a match
+		if (args.length > 1 && commandList[theCmd].hasOwnProperty('subcommands') && commandList[theCmd].subcommands.hasOwnProperty(args[1].toLowerCase())) {
+			let command = findCommand(message, args.slice(1), commandList[theCmd].subcommands);
+			if (!command) { return null };
+			if (commandList[theCmd].disableall) { command.disabled = true; }
+			command.name = theCmd + " " + command.name;
+			return command;
+		} else {
+			// all good, return command
+			return {
+				disabled: commandList[theCmd].disableall || commandList[theCmd].disabled,
+				name: args[0],
+				command: commandList[theCmd],
+				message: message,
+				args: args.slice(1).join(" ")
+			};
+		}
+	} else {
+		// not a valid command
+		return null;
+	}
+};
+
 BOT.on('message', message => {
 	if (message.content.startsWith(cons.PREFIX) || message.channel.type === 'dm') {
 
-		let botCmd;
-		if (message.content.startsWith(cons.PREFIX)) {
-			botCmd = message.content.slice(2); // retains the whole line, minus m.
-		} else {
-			botCmd = message.content; // DM and didn't start with m. so whole line is command
-		}
-		let theCmd = botCmd.split(' ')[0];
+    let botCmd;
+    if (message.content.startsWith(cons.PREFIX)) {
+      botCmd = message.content.slice(2); // retains the whole line, minus m.
+    } else {
+      botCmd = message.content; // DM and didn't start with m. so whole line is command
+    }
+    let args = botCmd.split(' '); // remove the command itself, rest is args
+    let theCmd = args[0];
 
-		let args = botCmd.replace(theCmd, ''); // remove the command itself, rest is args
-		theCmd = theCmd.toLowerCase();
-		if (!spongeBot.hasOwnProperty(theCmd)) {
-			// not a valid command, might be a menu-mode number or player macro...
-			if (isNaN(parseInt(theCmd)) && theCmd !== cons.PLAYER_MACRO_LETTER) {
-				return; // nope, not a number, either, so fail out of here
-			} else {
+    theCmd = theCmd.toLowerCase();
+    if (!spongeBot.hasOwnProperty(theCmd)) {
+      // not a valid command, might be a menu-mode number or player macro...
+      if (isNaN(parseInt(theCmd)) && theCmd !== cons.PLAYER_MACRO_LETTER) {
+        return; // nope, not a number, either, so fail out of here
+      } else {
 
-				isMenu = (theCmd !== cons.PLAYER_MACRO_LETTER);
-				if (!isMenu) {
-					// if it's a player macro, replace theCmd with everything after the "macro letter"]
-					theCmd = args;
-				}
-				let newFullCmd = iFic.macro.do(message, theCmd, isMenu);
-				if (newFullCmd) {
-					let newCmd = newFullCmd.split(' ')[0];
-					args = newFullCmd.replace(newCmd, '');
-					if (!spongeBot.hasOwnProperty(newCmd)) {
-						debugPrint(` WARNING! Menu or macro alias for ${theCmd} was invalid command ${newCmd}!`);
-					} else {
-						theCmd = newCmd; // ...and continue on through to regular parser
-					}
-				}
-			}
-		}
-
-		args = args.slice(1); // remove leading space
-
-		if (typeof spongeBot[theCmd] !== 'undefined') {
-			debugPrint(`  @${message.author.id}: ${theCmd} (${args})`);
-
-			if (!spongeBot[theCmd].disabled) {
-				if (spongeBot[theCmd].access) {
+        isMenu = (theCmd !== cons.PLAYER_MACRO_LETTER);
+        if (!isMenu) {
+          // if it's a player macro, replace theCmd with everything after the "macro letter"]
+          theCmd = args.slice(1).join(" ");
+        }
+        let newFullCmd = iFic.macro.do(message, theCmd, isMenu);
+        if (newFullCmd) {
+          args = newFullCmd.split(' ');
+          let newCmd = args[0].toLowerCase();
+          if (!spongeBot.hasOwnProperty(newCmd)) {
+            debugPrint(` WARNING! Menu or macro alias for ${theCmd} was invalid command ${newCmd}!`);
+          } else {
+            theCmd = newCmd; // ...and continue on through to regular parser
+          }
+        }
+      }
+    }
+		resultCommand = findCommand(message, args);
+		if (resultCommand) { // command found
+			debugPrint(`  @${message.author.id}: ${resultCommand.name} (${resultCommand.args})`);
+			if (!resultCommand.disabled) {
+				let runCommand = true;
+				if (resultCommand.command.access) {
 					// requires special access
-					if (!hasAccess(message.author.id, spongeBot[theCmd].access)) {
-						utils.chSend(message, 'You are unable to do that.');
-					} else {
-						// missing spongebot.command.do
-						if (!spongeBot[theCmd].hasOwnProperty('do')) {
-							debugPrint('!!! WARNING:  BOT.on(): missing .do() on ' + theCmd +
-							  ', ignoring limited-access command !' + theCmd);
-						} else {
-							// all good. reset users idle timeout and then run command
-							iFic.idleReset(message);
-							spongeBot[theCmd].do(message, args);
-						}
+					if (!hasAccess(message.author.id, resultCommand.command.access)) {
+						utils.chSend(message, 'Your shtyle is too weak ' +
+						  'for that command, ' + message.author);
+						runCommand = false;
 					}
-				} else {
-
-					if (message.author.bot) {
-						debugPrint('Blocked a bot-to-bot !command.');
+				} else if (message.author.bot) {
+					debugPrint('Blocked a bot-to-bot !command.');
+					runCommand = false;
+				}
+				if (runCommand) {
+					// missing .do
+					if (!resultCommand.command.hasOwnProperty('do')) {
+						debugPrint('!!! WARNING:  BOT.on(): missing .do() on ' + theCmd +
+						  ', ignoring limited-access command !' + theCmd);
 					} else {
-						if (!spongeBot[theCmd].hasOwnProperty('do')) {
-							debugPrint('!!! WARNING:  BOT.on(): missing .do() on ' + theCmd +
-							  ', ignoring user command !' + theCmd);
-						} else {
-							// all good. reset users idle timeout and then run command
-							iFic.idleReset(message);
-							spongeBot[theCmd].do(message, args);
-						}
+						// all good. reset users idle timeout and then run command
+						iFic.idleReset(message);
+						resultCommand.command.do(message, resultCommand.args);
 					}
 				}
 			} else {
