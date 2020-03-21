@@ -39,6 +39,7 @@ const debugPrint = function(inpString){
 		}
 	}
 };
+
 //-----------------------------------------------------------------------------
 const spongeBot = {};
 //-----------------------------------------------------------------------------
@@ -53,6 +54,130 @@ const hasAccess = function(who, accessArr) {
 	return (who === cons.SPONGE_ID);
 };
 //-----------------------------------------------------------------------------
+/*const MUDInstance = function() {
+	this.useCount = 0;
+	this.ready = false;
+	this.iFic = iFic;
+};
+MUDInstance.prototype.reserve = function() { // call when you want to use the world
+	if (this.ready) {
+		this.useCount++;
+		return true;
+	}
+	return false;
+};
+MUDInstance.prototype.release = function() { // call when you are done using the world
+	if (this.ready) {
+		this.useCount--;
+	} else {
+		// THIS SHOULDN'T HAPPEN PLEASE ERROR MESSAGE
+	}
+};
+MUDInstance.prototype.externalRun = function(callback, response) { // call when you want to do stuff with the world in a callback
+	if (this.reserve()) {
+		callback();
+		this.release();
+	} else {
+		response("The world is not accessible.");
+	}
+};
+let mudInstance = new MUDInstance();
+const discordCommandUseMUDInstance = function(callback) {
+	mudInstance.externalRun(callback, function(result) { ut.chSend(message, result); });
+};*/
+//-----------------------------------------------------------------------------
+const objectMap = function(source, mapFn) {
+	let result = {};
+	for (let i in source) {
+		result[i] = mapFn(source[i]);
+	}
+	return result;
+};
+//-----------------------------------------------------------------------------
+/*const isPlayer = function(data) {
+	let who = data.who;
+	return typeof players[who] !== 'undefined';
+};
+
+const hasAccessLevel = function(data) {
+
+}*/
+
+/*
+say: {
+	"standardTests":
+	"isAwake": true,
+	"isMuted": false,
+}
+
+whisper: {
+	"say": true,
+	"inFriendList": true,
+}
+*/
+
+
+// lots of code from cantDo() to be refactored into here!
+// (see ific.js ~L260 for cantDo())
+
+
+
+/*const Validators = {
+	methods: {
+		and: function(validators) {
+			for (let i=0;i<validators.length;i++) {
+				// result.push() ?
+				let result = Validators[validators[i]](data);
+				if (!result.success) return result;
+			}
+			return { message: "", success: true };
+		}
+	}
+};
+Object.assign(Validators, {
+	"isAwake": awakeTester,
+	"isPlayer": isPlayer,
+	"standardTests": Validators.methods.and(["isAwake", "isPlayer"]) // is good
+});
+
+
+const Command = function(trigger, data) {
+
+	// do validation
+	let canRunCommand;
+	canRunCommand = Validators[trigger](data);
+
+	if (canRunCommand) {
+		mudInstance.iFic[trigger].do(data.message, data.args);
+	}
+
+
+
+	// I think our "command/subcommand" approach here is pretty fine
+};*/
+// how does this look???
+/*Object.assign(spongeBot, objectMap({
+	time: { help: "Get info on the current MUD world date and time.", do: "time" },
+	look: { help: "Look at the room you are in.", do: "look" },
+	joinmud: { help: "Joins SpongeMUD (wakes your character up if asleep, " +
+	  " or creates a new character if you don't have one.", do: "joinmud" },
+	exitmud: { "help": "Logoff SpongeMUD and put your character to sleep." +
+	"\nThis will prevent you from seeing people entering and leaving rooms," +
+	" saying things, and any other forms of DMs from SpongeMUD until you log" +
+	" back on using `joinmud`", "do": "exitmud" },
+	get: { "help": "`get <item>` to pick something up", "do": "get" },
+	"look": { "help": "Look at the room you are in.", "do": "look" }
+}, function(command) {
+	let result = Object.assign({}, command);
+	result.do = function(message, args) {
+		discordUseMUDInstance(function() { mudInstance[command.do].time.do(message, args); });
+	};
+	return result;
+});*/
+// actually this seems like a good idea, reducing code repetition ^^^ but
+
+
+
 spongeBot.time = {
 	help: "Get info on the current MUD world date and time.",
 	do: function(message, args) {
@@ -62,6 +187,7 @@ spongeBot.time = {
 spongeBot.look = {
 	help: "Look at the room you are in.",
 	do: function(message, args) {
+		//iFic.look.do(message, args);
 		iFic.look.do(message, args);
 	}
 };
