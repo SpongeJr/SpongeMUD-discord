@@ -17,6 +17,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
 const cons = require("./lib/constants.js");
+const manual = require("./manual/manual.json");
 const Discord = require("discord.js");
 const CONFIG = require("../../" + cons.CFGFILE);
 const BOT = new Discord.Client();
@@ -873,6 +874,46 @@ spongeBot.server = {
 		utils.chSend(message, str);
 	},
 	help: 'Gives info about the server on which you send me the command.'
+};
+spongeBot.man = {
+	do: function(message, args) {
+		let outStr = "";
+		let topics = manual.topics;
+		if (!args) {
+			outStr += " **SpongeMUD Player Manual** available topics:";
+			outStr += "\n```=-=-=-=-=-=-=";
+			for (let topic of manual.topics) {
+				outStr += "\n";
+				outStr += `man ${topic.name}`.padEnd(20) + ` : ${topic.desc}`;
+			}
+			outStr += "```";
+		} else {
+			args = args.split(" ");
+			let chosenTopic = args[0];
+			let match = manual.topics.find(function(topic) {
+				let goodMatch = false;
+				if (topic.name === chosenTopic) {
+					// exact match
+					goodMatch = true;
+				} else {
+					// inexact, check partial matches...
+					// we only take at least 2 characters on inexact matches
+					if (chosenTopic.length >= 2) {
+						goodMatch = topic.name.startsWith(chosenTopic);
+					}
+				}
+				return goodMatch;
+			 });
+			if (match) {
+				outStr += ` **SpongeMUD Player Manual**  TOPIC: \`${match.name}\`\n`;
+				outStr += ` _${match.desc}_\n`;
+				outStr += match.textPages[0];
+			} else {
+				outStr += "Topic not found. Try `man` by itself for a list.";
+			}
+		}
+		utils.chSend(message, outStr);
+	}
 };
 spongeBot.help = {
 	do: function(message, args) {

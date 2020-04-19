@@ -1,0 +1,29 @@
+{
+	"topics": [
+		{
+			"name": "newuser",
+			"desc": "New users should read this! These are the most important things a SpongeMUD user should know.",
+			"textPages": [
+				"-- placeholder text for newuser topic --"
+			]
+		},{
+			"name": "privacy",
+			"desc": "Everything you want to know (hopefully) about SpongeMUD and your privacy.",
+			"textPages": [
+				"-- placeholder text for privacy topic --"
+			]
+		},{
+			"name": "social",
+			"desc": "All about interacting with others in the virtual world of SpongeMUD.",
+			"textPages": [
+				"-- placeholder text for social topic --"
+			]
+		},{
+			"name": "movement",
+			"desc": "How to get around the world.",
+			"textPages": [
+				"-- placeholder text for movement topic --"
+			]
+		}
+	]
+}
