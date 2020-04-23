@@ -20,6 +20,7 @@ const cons = require("./lib/constants.js");
 const manual = require("./manual/manual.json");
 const Discord = require("discord.js");
 const CONFIG = require("../../" + cons.CFGFILE);
+const servercfgs = require(cons.SERVERCFGFILE);
 const BOT = new Discord.Client();
 const FS = require("fs");
 
@@ -192,11 +193,18 @@ spongeBot.look = {
 		iFic.look.do(message, args);
 	}
 };
+spongeBot.setup = {
+	help: "Discord server (guild) admins should run this to set up their server.\n" +
+	  "Players will be unable to login (and thus, join the game) until this command has been run by a server admin.",
+	do: function(message, args) {
+		iFic.setup.do(message, args, servercfgs);
+	}
+}
 spongeBot.joinmud = {
 	help: "Joins SpongeMUD (wakes your character up if asleep, " +
 	  " or creates a new character if you don't have one.",
 	do: function(message, args) {
-		iFic.joinmud.do(message, args);
+		iFic.joinmud.do(message, args, servercfgs);
 	}
 };
 spongeBot.exitmud = {
@@ -288,9 +296,15 @@ spongeBot.backup = {
 	}
 };
 spongeBot.approve = {
-	help: "(wizards+ only) `approve <character>` to approve a profile.",
+	help: "(moderator command) `approve <character>` to approve a pending profile.",
 	do: function(message, args) {
 		iFic.approve.do(message, args);
+	}
+};
+spongeBot.deny = {
+	help: "(moderator command) `deny <character>` to deny a pending profile.",
+	do: function(message, args) {
+		iFic.deny.do(message, args);
 	}
 };
 spongeBot.mute = {
@@ -995,7 +1009,14 @@ BOT.on('ready', () => {
 
 	iFic.initTimers(); // kick off all the ticks and timers and stuff
 });
-
+BOT.on('error', (info) => {
+	console.log(`##### ERROR! #####  ${new Date()}`);
+	//console.log(JSON.stringify(info)); // circular reference, can't stringify
+});
+BOT.on('warn', (info) => {
+	console.log(`##### WARNING! #####  ${new Date()}`);
+	//console.log(JSON.stringify(info)); // circular reference, can't stringify
+});
 BOT.on('rateLimit', (info) => {
     console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
     console.log(JSON.stringify(info));
