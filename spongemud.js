@@ -23,9 +23,37 @@ const CONFIG = require("../../" + cons.CFGFILE);
 const servercfgs = require(cons.SERVERCFGFILE);
 const BOT = new Discord.Client();
 const FS = require("fs");
-
 const helpfile = require('./lib/helpfile.json');
+//-----------------------------------------------------------------------------
+// Discord Bot List / top.gg webhook for vote updates
+const DBL = require("dblapi.js");
+const dbl = new DBL(CONFIG.dbl.dbltoken, { webhookPort: CONFIG.dbl.webhookPort, webhookAuth: CONFIG.dbl.webhookAuth });
+dbl.webhook.on('ready', hook => {
+  console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
+});
+dbl.webhook.on('vote', vote => {
+    let newVoteStr = "";
 
+    if (vote.type === "test") {
+        newVoteStr += `:test_tube: A test SpongeMUD vote was received!`;
+        console.log(`DBL webhook: ${vote.user} just test-voted!`);
+        // iFic.handleDblUpvote(vote); // don't do this, it's a test!
+    } else {
+        newVoteStr += `:arrow_up: SpongeMUD has just been upvoted on top.gg!`;
+        console.log(`DBL webhook: ${vote.user} just voted!`);
+        iFic.handleDblUpvote(vote);
+    }
+    BOT.channels.cache.get(cons.MODERATORCHAN_ID).send(newVoteStr);
+});
+// Optional events
+dbl.on('posted', () => {
+    console.log('Server count posted!');
+});
+dbl.on('error', e => {
+    console.log("DBL webhook error! data follows:")
+    console.log(e);
+});
+//-----------------------------------------------------------------------------
 const debugPrint = function(inpString){
 // for now, just checks if the global debugMode is true. If it isn't,
 // doesn't output, just returns
@@ -1011,11 +1039,11 @@ BOT.on('ready', () => {
 });
 BOT.on('error', (info) => {
 	console.log(`##### ERROR! #####  ${new Date()}`);
-	//console.log(JSON.stringify(info)); // circular reference, can't stringify
+	//console.log(info); // circular reference, can't stringify
 });
 BOT.on('warn', (info) => {
 	console.log(`##### WARNING! #####  ${new Date()}`);
-	//console.log(JSON.stringify(info)); // circular reference, can't stringify
+	//console.log(info); // circular reference, can't stringify
 });
 BOT.on('rateLimit', (info) => {
     console.log(`##### RATE LIMITED #####  ${new Date()}    Data follows:`);
