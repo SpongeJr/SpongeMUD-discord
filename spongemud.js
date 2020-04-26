@@ -63,7 +63,7 @@ const debugPrint = function(inpString){
 			if ((inpString !== '') && (typeof inpString === 'string')) {
 				// todo: rate limiter?
 				if (inpString.length < 1024) {
-					BOT.channels.get(cons.DEBUGCHAN_ID).send(inpString);
+					BOT.channels.cache.get(cons.DEBUGCHAN_ID).send(inpString);
 				}
 			}
 		}
@@ -838,22 +838,23 @@ spongeBot.mail = {
 		}
 	},
 	help: "List all mail.",
-	longHelp: "List all mail. Use `mail` or `mail list` to list your mail.",
+	longHelp: "**MUDmail help**: use `mail` or `mail list` to list your mail." +
+      "\nUse `write` to begin writing a letter, and `post` to send it off." +
+      "\n`help mail <subcommand>` will give help on the subcommands.",
 	do: function(message, args) {
 		iFic.mail.do(message, args);
 	}
 };
 spongeBot.write = {
 	help: "Use `write <your whole letter here>` to write a letter to be sent later with `post`.",
-	longHelp: "Use `write <your letter>` to write a letter to be sent with the `post` command at a Postpigeon's Roost.",
+	longHelp: "Use `write <your letter>` to write a letter to be sent with the `post` command.",
 	do: function(message, args) {
 		iFic.write.do(message, args);
 	}
 };
 spongeBot.post = {
 	help: "Use `post <recipient> <subject> to send off a letter you've previously written using `write`.",
-	longHelp: "At a Postpigeon's Roost, use `post <recipient> <subject>` " +
-	  "to send off a letter you've previously written using `write`.",
+	longHelp: "Use `post <recipient> <subject>` to send off a letter you've previously written using `write`.",
 	do: function(message, args) {
 		iFic.post.do(message, args);
 	}
@@ -1033,7 +1034,7 @@ BOT.on('ready', () => {
 	iFic.buildMobs();
 	debugPrint(`SpongeMUD version ${cons.VERSION_STRING} READY!`);
 	BOT.user.setActivity(`${cons.PREFIX}joinmud   (if you dare!)`, { type: 'PLAYING' });
-	if (Math.random() < 0.01) {BOT.channels.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
+	if (Math.random() < 0.02) {BOT.channels.cache.get(cons.SPAMCHAN_ID).send(`Join the MUD today with \`${cons.PREFIX}joinmud\`!`);}
 
 	iFic.initTimers(); // kick off all the ticks and timers and stuff
 });
@@ -1052,7 +1053,7 @@ BOT.on('rateLimit', (info) => {
     info = JSON.stringify(info);
 
 	// get channel id from info.path and get a Channel object:
-    const channel = BOT.channels.get(info.split("/channels")[1].split("/")[1]);
+    const channel = BOT.channels.cache.get(info.split("/channels")[1].split("/")[1]);
 
     //console.log(channel);
     ut.messageQueue.setSlowMode(channel, info.timeDifference);
