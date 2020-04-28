@@ -669,6 +669,18 @@ spongeBot.inv = {
 		iFic.inv.do(message, args);
 	}
 };
+spongeBot.money = {
+	help: 'Check your money pouch and see your currency for the current zone as well as global currency.',
+	do: function(message, args) {
+		iFic.money.do(message, args);
+	}
+};
+spongeBot.allmoney = {
+	help: 'Check your money pouch and see your currency for all zones.',
+	do: function(message, args) {
+		iFic.allmoney.do(message, args);
+	}
+};
 spongeBot.say = {
 	help: 'speak to those in the same location',
 	do: function(message, args) {
