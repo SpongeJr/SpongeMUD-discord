@@ -669,6 +669,18 @@ spongeBot.inv = {
 		iFic.inv.do(message, args);
 	}
 };
+spongeBot.talk = {
+    help: 'Talk to an NPC or mob in the current room.',
+	do: function(message, args) {
+		iFic.talk.do(message, args);
+	}
+};
+spongeBot.pick = {
+    help: 'Use pick in conversation interfaces to select a conversation choice.',
+	do: function(message, args) {
+		iFic.pick.do(message, args);
+	}
+};
 spongeBot.money = {
 	help: 'Check your money pouch and see your currency for the current zone as well as global currency.',
 	do: function(message, args) {
