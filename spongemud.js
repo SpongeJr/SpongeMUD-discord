@@ -223,7 +223,8 @@ spongeBot.look = {
 };
 spongeBot.setup = {
 	help: "Discord server (guild) admins should run this to set up their server.\n" +
-	  "Players will be unable to login (and thus, join the game) until this command has been run by a server admin.",
+	  "Players will be unable to login (and thus, join the game) until this command" +
+      " has been run by a server admin (Requires: Manage Server permission).",
 	do: function(message, args) {
 		iFic.setup.do(message, args, servercfgs);
 	}
